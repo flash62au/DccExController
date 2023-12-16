@@ -62,11 +62,6 @@
 
 // ********************************************************************************************
 
-// DCC Addresses below or equal to this number will be treated as short addresses.  
-// DCC++EX, NCE, Digitrax use 127, Lenz use 99
-
-#define SHORT_DCC_ADDESS_LIMIT         127  
-
 // speed increase for each click of the encoder 
 
 #define SPEED_STEP                       4
