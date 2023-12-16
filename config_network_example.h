@@ -6,12 +6,6 @@ const int maxSsids = 4;
 const String ssids[maxSsids] = {"Network1", "Network2", "Network3", "Network4"};
 const String passwords[maxSsids] = {"password1", "password2", "password3", "password4"};
 
-const String turnoutPrefixes[maxSsids] = {"NT", "NT", "NT", "NT"};  // required if you wish to use turnouts  
-// this the prefix of all turnout system names for YOUR system, for the wiThrottle servers on the the networks above
-
-const String routePrefixes[maxSsids] = {"IO:AUTO:", "IO:AUTO:", "IO:AUTO:", "IO:AUTO:"};  // required if you wish to use routes  
-// this is the prefix of all route system names for YOUR system, for the wiThrottle servers on the  networks above
-
 // If defined this must be of the form 999999999999:99999  e.g. "19216800400102560" equals 192.168.004.001:2560
 // Each block of the ip address MUST be 3 digit. Use leading zeros if needed to insure 3 digits.
 // The port MUST be 5 digit. Use leading zeros if needed to insure 5 digits.

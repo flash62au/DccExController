@@ -221,9 +221,6 @@ const char ssidPasswordBlankChar = 164;
 #define FONT_SPEED_STEP u8g2_font_open_iconic_all_1x_t
 #define FONT_NEXT_THROTTLE u8g2_font_6x12_m_symbols
 
-# define DCC_EX_TURNOUT_PREFIX ""
-# define DCC_EX_ROUTE_PREFIX "R"
-
 #define CONSIST_LEAD_LOCO 0
 #define CONSIST_ALL_LOCOS 1
 

@@ -20,8 +20,6 @@ extern Direction currentDirection[];
 extern int speedStepCurrentMultiplier;
 
 extern TrackPower trackPower;
-extern String turnoutPrefix;
-extern String routePrefix;
 
 extern bool circleValues;
 extern int encoderValue;

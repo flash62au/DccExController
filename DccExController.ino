@@ -54,8 +54,6 @@ Direction currentDirection[6];   // set to maximum possible (6)
 int speedStepCurrentMultiplier = 1;
 
 TrackPower trackPower = PowerUnknown;
-String turnoutPrefix = "";
-String routePrefix = "";
 
 // encoder variables
 bool circleValues = true;
@@ -399,19 +397,13 @@ void selectSsidFromFound(int selection) {
 
 void getSsidPasswordAndWitIpForFound() {
     selectedSsidPassword = "";
-    turnoutPrefix = "";
-    routePrefix = "";
     if (selectedSsid.substring(0,6) == "DCCEX_") {
       selectedSsidPassword = "PASS_" + selectedSsid.substring(6);
       witServerIpAndPortEntered = "19216800400102560";
-      turnoutPrefix = DCC_EX_TURNOUT_PREFIX;
-      routePrefix = DCC_EX_ROUTE_PREFIX;
     } else {
       for (int i = 0; i < maxSsids; ++i) {
         if (selectedSsid == ssids[i]) {
           selectedSsidPassword = passwords[i];
-          turnoutPrefix = turnoutPrefixes[i];
-          routePrefix = routePrefixes[i];
           break;
         }
       }
@@ -469,10 +461,6 @@ void showListOfSsids() {  // show the list from the specified values in config_n
       selectedSsid = ssids[0];
       selectedSsidPassword = passwords[0];
       ssidConnectionState = CONNECTION_STATE_SELECTED;
-
-      turnoutPrefix = turnoutPrefixes[0];
-      routePrefix = routePrefixes[0];
-      
     } else {
       ssidConnectionState = CONNECTION_STATE_SELECTION_REQUIRED;
       keypadUseType = KEYPAD_USE_SELECT_SSID;
@@ -487,9 +475,6 @@ void selectSsid(int selection) {
     ssidConnectionState = CONNECTION_STATE_SELECTED;
     selectedSsid = ssids[selection];
     selectedSsidPassword = passwords[selection];
-    
-    turnoutPrefix = turnoutPrefixes[selection];
-    routePrefix = routePrefixes[selection];
   }
 }
 
@@ -1613,7 +1598,7 @@ void doMenu() {
       }
     case MENU_ITEM_ROUTE: {  // route
         if (menuCommand.length()>1) {
-          int id = (routePrefix + menuCommand.substring(1, menuCommand.length())).toInt();
+          int id = menuCommand.substring(1, menuCommand.length()).toInt();
           // if (!route.equals("")) { // a loco is specified
             debug_print("route: "); debug_println(id);
             dccexProtocol.startRoute(id);
@@ -2173,9 +2158,10 @@ void _loadRouteList() {
     int index = 0;
     for (Route* rl=dccexProtocol.routes->getFirst(); rl; rl=rl->getNext()) {
       if (index < maxRouteList) {
+        debug_print("_loadRouteList() : "); debug_print(rl->getId());
         routeListIndex[index] = index; 
         routeListSysName[index] = rl->getId(); 
-        turnoutListUserName[index] = rl->getName();
+        routeListUserName[index] = rl->getName();
         index++;
       }
     }
