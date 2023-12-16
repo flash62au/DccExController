@@ -1,9 +1,6 @@
-# WiTcontroller
+# DccExController
 
-A WiTcontroller is a simple DIY, handheld controller that talks to a wThrottle Server (JMRI, DCC++EX and many others) using the wiThrottle protocol to control DCC model trains. 
-
-[See a video of it in use here.](https://youtu.be/RKnhfBCP_SQ)
-
+A DccExController is a simple DIY, handheld controller that talks to a wThrottle Server (JMRI, DCC++EX and many others) using the Native DCC-EX protocol, exclusive to the EX-CommandStations, to control DC and DCC model trains. 
 
 [Discussion on Discord.](https://discord.com/channels/713189617066836079/735019837746577438)
 
@@ -19,13 +16,7 @@ A WiTcontroller is a simple DIY, handheld controller that talks to a wThrottle S
 
 2. Loading the code (sketch) requires downloading of one of the IDEs, this sketch, the libraries, etc. so some experience with Arduinos is helpful, but not critical.
 
-3. A wiThrottle Server to connect to. WiTcontroller will work with any wiThrottle Server. e.g.
-
-    * JMRI
-    * DCC++EX
-    * MRC WiFi
-    * Dijitrax LnWi
-
+3. An EX-CommandStation to connect to. DccExController will ONLY work with any EX-CommandStations only
 ---
 
 ## Building
@@ -55,7 +46,7 @@ Notes:
 * The 3x4 keypad petGSX designed the case for came from Jaycar and is slightly narrower than the one you see in the 'deconstructed' view in the video above.
 * The case requires about a dozen M2x4mm screws
 
-* For a different take on what is possible by extending the design, have a look at: https://1fatgmc.com/RailRoad/DCC/page-5-B.html
+* For a different take on what is possible by extending the design, have a look at: https://1fatgmc.com/RailRoad/DCC/page-5-B.html  Note, this uses the WiTcontroller code, but will work equally as well with the DccExController.
 
 ## Loading the code
 
@@ -84,9 +75,9 @@ Notes:
        * Extract the zip file to a local folder.  The default folder for the Arduino usually looks like "...username\Documents\Arduino\". This is a good but not essential place to put it.
 4. Load the needed libraries to your PC. These can loaded from the *Library Manager* in the *Arduino IDE*.
     * *U8g2lib.h* -  Search for "U8g2"   Install version 2.34.22
-    * *AiEsp32RotaryEncoder.h* - search for "Ai Esp32 Rotary Encoder"  Install Version 1.6
-    * *Keypad.h* - Search for "Keypad" by Mark Stanley   install version 3.1.1
-    * *dccexProtocol.h* - Search for "DCCEXProtocol"  Install version 0.0.2 or later if available
+    * *AiEsp32RotaryEncoder.h* - search for "Ai Esp32 Rotary Encoder"  Install Version 1.6, or later
+    * *Keypad.h* - Search for "Keypad" by Mark Stanley   install version 3.1.1, or later
+    * *dccexProtocol.h* - Search for "DCCEXProtocol"  Install version 0.0.3, or later if available
 5. These should have been automatically installed when you downloaded the esp32 boards.  *YOU SHOULD NOT NEED TO DO ANYTHING SPECIFIC TO GET THESE*
     * *WiFi.h*  - https://github.com/espressif/arduino-esp32/tree/master/libraries/WiFi
     * *ESPmDNS.h* - https://github.com/espressif/arduino-esp32/blob/master/libraries/ESPmDNS
@@ -102,11 +93,11 @@ Notes:
     * Click *Upload* 
 
 Notes: 
-   * WiTcontroller version 0.10 or later requires WiThrottleProtocol version 1.0.3 or later.
+   * DccExController version 0.01 or later requires DCCEXProtocol version 0.0.3 or later.
    * The *WiFi.h* and *ESPmDNS.h* libraries were automatically installed for me when I installed the esp32 boards, however you may need to install them manually.
    * Later versions of the esp board support are available and do appear to work, but if you have difficulties version 1.0.6 appears to be stable.
    * Later versions of the libraries generally should work, but if you have difficulties use the versions listed above.
-   * To get the WiTcontroller sketch I recommend using either the git command line, or the far more friendly 'GitHub Desktop' app.  See instructions above.
+   * To get the DccExController sketch I recommend using either the git command line, or the far more friendly 'GitHub Desktop' app.  See instructions above.
    * If you receive and error related to Python, and you are on MacOs 12 and above please edit the platform file, change from python to python3 as follows; preferences->user/path/arduino/packages/hardware/esp32/version/platform.txt and edit the line that looks as follows:tools.gen_esp32part.cmd=python3 "{runtime.platform.path}/tools/gen_esp32part.py"
 
 ---
