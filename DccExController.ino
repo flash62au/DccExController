@@ -123,13 +123,13 @@ String routeListUserName[maxRouteList];
 Throttle* throttles[6];   // set to maximum possible (6 throttles)
 
 // function states
-boolean functionStates[6][28];   // set to maximum possible (6 throttles)
+boolean functionStates[6][MAX_FUNCTIONS];   // set to maximum possible (6 throttles)
 
 // function labels
-String functionLabels[6][28];   // set to maximum possible (6 throttles)
+String functionLabels[6][MAX_FUNCTIONS];   // set to maximum possible (6 throttles)
 
 // consist function follow
-int functionFollow[6][28];   // set to maximum possible (6 throttles)
+int functionFollow[6][MAX_FUNCTIONS];   // set to maximum possible (6 throttles)
 
 // speedstep
 int currentSpeedStep[6];   // set to maximum possible (6 throttles)
@@ -1366,7 +1366,7 @@ void doKeyPress(char key, boolean pressed) {
             selectFunctionList((key - '0')+(functionPage*10));
             break;
           case '#':  // next page
-            if ( (functionPage+1)*10 < 28 ) {
+            if ( (functionPage+1)*10 < MAX_FUNCTIONS ) {
               functionPage++;
               writeOledFunctionList(""); 
             } else {
@@ -1425,7 +1425,7 @@ void doDirectCommand (char key, boolean pressed) {
   debug_print("doDirectCommand(): "); debug_println(key);
   int buttonAction = buttonActions[(key - '0')];
   if (buttonAction!=FUNCTION_NULL) {
-    if ( (buttonAction>=FUNCTION_0) && (buttonAction<=FUNCTION_28) ) {
+    if ( (buttonAction>=FUNCTION_0) && (buttonAction<=FUNCTION_31) ) {
       doDirectFunction(currentThrottleIndex, buttonAction, pressed);
   } else {
       if (pressed) { // only process these on the key press, not the release
@@ -1440,7 +1440,7 @@ void doDirectAdditionalButtonCommand (int buttonIndex, boolean pressed) {
   debug_print("doDirectAdditionalButtonCommand(): "); debug_println(buttonIndex);
   int buttonAction = additionalButtonActions[buttonIndex];
   if (buttonAction!=FUNCTION_NULL) {
-    if ( (buttonAction>=FUNCTION_0) && (buttonAction<=FUNCTION_28) ) {
+    if ( (buttonAction>=FUNCTION_0) && (buttonAction<=FUNCTION_31) ) {
       doDirectFunction(currentThrottleIndex, buttonAction, pressed);
   } else {
       if (pressed) { // only process these on the key press, not the release
@@ -1694,7 +1694,7 @@ void resetMenu() {
 }
 
 void resetFunctionStates(int multiThrottleIndex) {
-  for (int i=0; i<28; i++) {
+  for (int i=0; i<MAX_FUNCTIONS; i++) {
     functionStates[multiThrottleIndex][i] = false;
   }
 }
@@ -1702,7 +1702,7 @@ void resetFunctionStates(int multiThrottleIndex) {
 void loadFunctionLabels(int multiThrottleIndex) {  // from Roster entry
   debug_println("loadFunctionLabels()");
   if (throttles[multiThrottleIndex]->getLocoCount() > 0) {
-    for (int i=0; i<28; i++) {
+    for (int i=0; i<MAX_FUNCTIONS; i++) {
       // char* fName = throttles[multiThrottleIndex]->getFirst()->getLoco()->getFunctionName(i);
       char* fName = throttles[multiThrottleIndex]->getFirst()->getLoco()->getFunctionName(i);
       if (fName != nullptr) {
@@ -1719,7 +1719,7 @@ void loadFunctionLabels(int multiThrottleIndex) {  // from Roster entry
 
 void resetFunctionLabels(int multiThrottleIndex) {
   debug_print("resetFunctionLabels(): "); debug_println(multiThrottleIndex);
-  for (int i=0; i<28; i++) {
+  for (int i=0; i<MAX_FUNCTIONS; i++) {
     functionLabels[multiThrottleIndex][i] = "";
   }
   functionPage = 0;
@@ -1736,7 +1736,7 @@ void resetAllFunctionFollow() {
     functionFollow[i][0] = CONSIST_FUNCTION_FOLLOW_F0;
     functionFollow[i][1] = CONSIST_FUNCTION_FOLLOW_F1;
     functionFollow[i][2] = CONSIST_FUNCTION_FOLLOW_F2;
-    for (int j=3; j<28; j++) {
+    for (int j=3; j<MAX_FUNCTIONS; j++) {
       functionFollow[i][j] = CONSIST_FUNCTION_FOLLOW_OTHER_FUNCTIONS;
     }
   }
@@ -2105,7 +2105,7 @@ void selectRouteList(int selection) {
 void selectFunctionList(int selection) {
   debug_print("selectFunctionList() "); debug_println(selection);
 
-  if ((selection>=0) && (selection < 28)) {
+  if ((selection>=0) && (selection < MAX_FUNCTIONS)) {
     String function = functionLabels[currentThrottleIndex][selection];
     debug_print("Function Selected: "); debug_println(function);
     doFunction(currentThrottleIndex, selection, true);
@@ -2202,7 +2202,7 @@ void _processLocoUpdate(Loco* loco) {
         } else {
           debug_print("Received Speed: skipping response: ("); debug_print(lastSpeedThrottleIndex); debug_print(") speed: "); debug_println(loco->getSpeed());
         }
-        for (int j=0; j<28; j++) {
+        for (int j=0; j<MAX_FUNCTIONS; j++) {
           int state = (loco->isFunctionOn(j)) ?  1 : 0;
           if (functionStates[i][j] != loco->isFunctionOn(j)) {
             Serial.println("Changed");
@@ -2310,7 +2310,7 @@ void writeOledFunctionList(String soFar) {
       int j = 0; int k = 0;
       for (int i=0; i<10; i++) {
         k = (functionPage*10) + i;
-        if (k < 28) {
+        if (k < MAX_FUNCTIONS) {
           j = (i<5) ? i : i+1;
           // if (functionLabels[currentThrottleIndex][k].length()>0) {
             oledText[j] = String(i) + ": " 
@@ -2604,7 +2604,7 @@ void writeOledFunctions() {
   debug_println("writeOledFunctions():");
   //  int x = 99;
   // bool anyFunctionsActive = false;
-   for (int i=0; i < 28; i++) {
+   for (int i=0; i < MAX_FUNCTIONS; i++) {
      if (functionStates[currentThrottleIndex][i]) {
       // old function state format
   //     //  debug_print("Fn On "); debug_println(i);

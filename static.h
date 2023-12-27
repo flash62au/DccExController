@@ -1,5 +1,5 @@
 const String appName = "DccExController";
-const String appVersion = "    Version 0.02";
+const String appVersion = "    Version 0.03";
 const String msg_start = "Start";
 
 const String menu_menu =                   "* Menu                # Key Defs";
@@ -100,6 +100,8 @@ const int glyph_speed_step = 0x00d6;
 #define CMD_FUNCTION 0
 
 #define MAX_LOCOS     10  // maximum number of locos that can be added to the consist
+
+#define MAX_FUNCTIONS 32
 
 #define MENU_ITEM_FUNCTION '0'
 #define MENU_ITEM_ADD_LOCO '1'

@@ -2,7 +2,7 @@
 
 A DccExController is a simple DIY, handheld controller that talks to a wThrottle Server (JMRI, DCC++EX and many others) using the Native DCC-EX protocol, exclusive to the EX-CommandStations, to control DC and DCC model trains. 
 
-[Discussion on Discord.](https://discord.com/channels/713189617066836079/735019837746577438)
+[Discussion on Discord.](https://discord.gg/Tydr98un)
 
 [3d Printed Case](https://www.thingiverse.com/thing:5440351)
 
@@ -16,7 +16,7 @@ A DccExController is a simple DIY, handheld controller that talks to a wThrottle
 
 2. Loading the code (sketch) requires downloading of one of the IDEs, this sketch, the libraries, etc. so some experience with Arduinos is helpful, but not critical.
 
-3. An EX-CommandStation to connect to. DccExController will ONLY work with any EX-CommandStations only
+3. An EX-CommandStation to connect to. DccExController will ONLY work with any EX-CommandStations!
 ---
 
 ## Building
@@ -94,7 +94,7 @@ Notes:
 
 Notes: 
    * DccExController version 0.02 or later requires DCCEXProtocol version 0.0.6 or later.
-   * DccExController version 0.01 or later requires DCCEXProtocol version 0.0.3 or later.
+   * DccExController version 0.01 requires DCCEXProtocol version 0.0.3 or later.
    * The *WiFi.h* and *ESPmDNS.h* libraries were automatically installed for me when I installed the esp32 boards, however you may need to install them manually.
    * Later versions of the esp board support are available and do appear to work, but if you have difficulties version 1.0.6 appears to be stable.
    * Later versions of the libraries generally should work, but if you have difficulties use the versions listed above.
@@ -129,7 +129,7 @@ Notes:
     - from the first 50 locos in the roster
   - Able to select multiple locos to create a consist
     - Able to change the facing of the additional locos in the consists (via the 'extra' menu after selection)
-  - Able to activate any function (0-28)
+  - Able to activate any function (0-31)
     - Showing of the roster function labels (from the wiThrottle server if provided)
     - Quick access to the functions by pressing #. Temporarily enabled via the Extras menu (or permanently enabled in config_button.h)
     - Limited ability to configure which functions are sent to the first or all locos in a consist (defined in config_button.h)
@@ -212,7 +212,7 @@ Pressing the Encoder button while the ESP32 is in Deep Sleep will revive it.
 
 Note: you need to edit config_buttons.h to alter these assignments   (copy config_buttons_example.h)
 - FUNCTION_NULL   - don't do anything
-- FUNCTION_0 - FUNCTION_28
+- FUNCTION_0 - FUNCTION_31
 - SPEED_STOP
 - SPEED_UP
 - SPEED_DOWN
