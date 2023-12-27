@@ -138,6 +138,7 @@ void doMenu(void);
 void resetMenu(void);
 
 void resetFunctionStates(int);
+void loadFunctionLabels(int); 
 void resetFunctionLabels(int); 
 void resetAllFunctionLabels(void); 
 void speedEstop(void);

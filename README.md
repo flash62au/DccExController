@@ -77,7 +77,7 @@ Notes:
     * *U8g2lib.h* -  Search for "U8g2"   Install version 2.34.22
     * *AiEsp32RotaryEncoder.h* - search for "Ai Esp32 Rotary Encoder"  Install Version 1.6, or later
     * *Keypad.h* - Search for "Keypad" by Mark Stanley   install version 3.1.1, or later
-    * *dccexProtocol.h* - Search for "DCCEXProtocol"  Install version 0.0.3, or later if available
+    * *dccexProtocol.h* - Search for "DCCEXProtocol"  Install version 0.0.6, or later if available
 5. These should have been automatically installed when you downloaded the esp32 boards.  *YOU SHOULD NOT NEED TO DO ANYTHING SPECIFIC TO GET THESE*
     * *WiFi.h*  - https://github.com/espressif/arduino-esp32/tree/master/libraries/WiFi
     * *ESPmDNS.h* - https://github.com/espressif/arduino-esp32/blob/master/libraries/ESPmDNS
@@ -93,6 +93,7 @@ Notes:
     * Click *Upload* 
 
 Notes: 
+   * DccExController version 0.02 or later requires DCCEXProtocol version 0.0.6 or later.
    * DccExController version 0.01 or later requires DCCEXProtocol version 0.0.3 or later.
    * The *WiFi.h* and *ESPmDNS.h* libraries were automatically installed for me when I installed the esp32 boards, however you may need to install them manually.
    * Later versions of the esp board support are available and do appear to work, but if you have difficulties version 1.0.6 appears to be stable.

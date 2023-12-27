@@ -1699,6 +1699,24 @@ void resetFunctionStates(int multiThrottleIndex) {
   }
 }
 
+void loadFunctionLabels(int multiThrottleIndex) {  // from Roster entry
+  debug_println("loadFunctionLabels()");
+  if (throttles[multiThrottleIndex]->getLocoCount() > 0) {
+    for (int i=0; i<28; i++) {
+      // char* fName = throttles[multiThrottleIndex]->getFirst()->getLoco()->getFunctionName(i);
+      char* fName = throttles[multiThrottleIndex]->getFirst()->getLoco()->getFunctionName(i);
+      if (fName != nullptr) {
+        // debug_print("loadFunctionLabels() "); 
+        // debug_println(fName);
+        functionLabels[multiThrottleIndex][i] = fName;
+      // } else {
+      //   debug_println("loadFunctionLabels() blank"); 
+      }
+    }
+  }
+  debug_println("loadFunctionLabels() end"); 
+}
+
 void resetFunctionLabels(int multiThrottleIndex) {
   debug_print("resetFunctionLabels(): "); debug_println(multiThrottleIndex);
   for (int i=0; i<28; i++) {
@@ -2042,15 +2060,15 @@ void selectRoster(int selection) {
 
   if ((selection>=0) && (selection < rosterSize)) {
     int address = rosterAddress[selection];
-    debug_print("add Loco: "); debug_println(address);
-    // dccexProtocol.addLocomotive(currentThrottleIndexChar, loco);
-    // dccexProtocol.getDirection(currentThrottleIndexChar, loco);
-    // dccexProtocol.getSpeed(currentThrottleIndexChar);
-    Loco* loco1 = new Loco(address, LocoSource::LocoSourceRoster);
+    debug_print("add Loco: "); debug_print(address);
+    Loco* loco1 = dccexProtocol.findLocoInRoster(address);
     throttles[currentThrottleIndex]->addLoco(loco1,FacingForward);
-//*********
+
+    debug_print(" name: "); debug_println(loco1->getName());
+
     resetFunctionStates(currentThrottleIndex);
-//*********
+    loadFunctionLabels(currentThrottleIndex);
+
     writeOledSpeed();
     keypadUseType = KEYPAD_USE_OPERATION;
   }
