@@ -19,5 +19,8 @@ const String passwords[maxSsids] = {"password1", "password2", "password3", "pass
 
 // ********************************************************************************************
 
-// Autoconnect to first found server (defaul, if not specified is true)
+// Autoconnect to first SSID in the list above (default, if not specified is false)
+// #define AUTO_CONNECT_TO_FIRST_DEFINED_SERVER true
+
+// Autoconnect to first found server (default, if not specified is true)
 #define AUTO_CONNECT_TO_FIRST_WITHROTTLE_SERVER true
