@@ -37,6 +37,10 @@
 
 // *********************************************************************************
 
+#ifndef MAX_BUFFER_SIZE
+ #define MAX_BUFFER_ZIZE 500
+#endif
+
 int keypadUseType = KEYPAD_USE_OPERATION;
 int encoderUseType = ENCODER_USE_OPERATION;
 int encoderButtonAction = ENCODER_BUTTON_ACTION;
@@ -298,7 +302,7 @@ char getMultiThrottleChar(int multiThrottleIndex) {
 }
 
 WiFiClient client;
-DCCEXProtocol dccexProtocol;
+DCCEXProtocol dccexProtocol(MAX_BUFFER_SIZE);
 MyDelegate myDelegate;
 int deviceId = random(1000,9999);
 

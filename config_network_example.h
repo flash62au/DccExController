@@ -24,3 +24,9 @@ const String passwords[maxSsids] = {"password1", "password2", "password3", "pass
 
 // Autoconnect to first found server (default, if not specified is true)
 #define AUTO_CONNECT_TO_FIRST_WITHROTTLE_SERVER true
+
+// ********************************************************************************************
+// uncomment and increase the #define line below if you need to override the default buffer size 
+// (default, if not specified is 500)
+//#define MAX_BUFFER_SIZE 1000
+
