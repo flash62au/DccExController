@@ -231,3 +231,25 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 - SPEED_STOP_THEN_TOGGLE_DIRECTION   - stops the loco if moving.  Toggles the direction if stationary.
 - MAX_THROTTLE_INCREASE    - change the number of available throttles on-the-fly
 - MAX_THROTTLE_DECREASE    - change the number of available throttles on-the-fly
+
+
+## Change Log
+
+### V0.06
+- temporary solution for latching buttons
+- F1 and F2 default to momentary - can be overridden (see config_buttons_example.h)
+
+### V0.05
+- option to specify/increase the buffer size
+
+### v0.04
+- option to autoconnect to first defined ssid
+
+### v0.03
+- support for 32 functions
+
+### v0.02
+- Fix loading of the function labels
+
+### v0.01
+- initial release

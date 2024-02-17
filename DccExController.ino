@@ -136,6 +136,10 @@ String functionLabels[6][MAX_FUNCTIONS];   // set to maximum possible (6 throttl
 // consist function follow
 int functionFollow[6][MAX_FUNCTIONS];   // set to maximum possible (6 throttles)
 
+// function default latching
+bool f1Latching = F1_LATCHING;
+bool f2Latching = F2_LATCHING;
+
 // speedstep
 int currentSpeedStep[6];   // set to maximum possible (6 throttles)
 
@@ -1444,10 +1448,27 @@ void doKeyPress(char key, boolean pressed) {
 }
 
 void doDirectCommand (char key, boolean pressed) {
-  debug_print("doDirectCommand(): "); debug_println(key);
+  debug_print("doDirectCommand(): "); debug_print(key);  debug_print("  press?: "); debug_println(pressed);
   int buttonAction = buttonActions[(key - '0')];
   if (buttonAction!=FUNCTION_NULL) {
     if ( (buttonAction>=FUNCTION_0) && (buttonAction<=FUNCTION_31) ) {
+
+      // start - temporary solution for latching buttons
+
+      // for latching functions - send the press=false only if currently 'pressed'
+      if ( ( ((buttonAction==1) && (f1Latching)) || ((buttonAction==2) && (f2Latching)) 
+            || (buttonAction==0) || (buttonAction>2) )
+            && (functionStates[currentThrottleIndex][buttonAction]) ) {
+        if (pressed) { // second press
+          debug_println("doDirectCommand(): Second press on a latching function");
+          doDirectFunction(currentThrottleIndex, buttonAction, false);
+        } // else do nothing on release
+        return;
+      }
+
+      // end - temporary solution for latching buttons
+
+      // momentary - send both press and release
       doDirectFunction(currentThrottleIndex, buttonAction, pressed);
   } else {
       if (pressed) { // only process these on the key press, not the release

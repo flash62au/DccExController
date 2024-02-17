@@ -127,3 +127,11 @@
 // DccExController console debug messages are ENABLED by default
 // to disable to console messages, set the following to  1    (i.e. 0 = on  1 = off)
 #define DCCEXCONTROLLER_DEBUG    0
+
+// *******************************************************************************************************************
+// Default latching/momentary functions - Direct mapping only 
+
+// uncomment either or both of these lines if you wish to make F1 and/or F2 latching = true or momentary = false
+// default is both are momentary
+//#define F1_LATCHING true
+//#define F2_LATCHING true
