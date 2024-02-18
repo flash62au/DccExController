@@ -108,13 +108,13 @@ Notes:
 **Currently functioning:**
 - Provides a list of discovered SSIDs with the ability to choose one. When you select one:
   - if it is one in your specified list (in the sketch), it will use that specified password 
-  - if it is a DCC++EX wiFi Command Station in access Point mode, it will guess the password
+  - if it is a EX-CommandStation in access Point mode, it will guess the password
   - otherwise it will ask to enter the password (Use the rotary encoder to choose each character and the encoder button to select it.  * = backspace.  # = enter the password.) 
 - Optionally provides a list of SSIDs with the specified passwords (in the sketch) to choose from
-- Auto-connects to the first found wiThrottle Protocol Server if only one found, otherwise 
+- Auto-connects to the first found EX-CommandStation if only one found, otherwise 
   - Asks which to connect to
   - If none found will ask to enter the IP Address and Port
-  - Guesses the wiThrottle IP address and Port for DCC++EX WiFi Access Point mode Command Stations
+  - Guesses the  IP address and Port for EX-CommandStations using Access Point mode
   - optionally can add a #define (a preference) to disable this auto connect feature
 - Rudimentary on-the-fly consists
 - Assign commands directly to the 1-9 buttons (in the sketch) (see list below)
@@ -129,7 +129,7 @@ Notes:
   - Able to select multiple locos to create a consist
     - Able to change the facing of the additional locos in the consists (via the 'extra' menu after selection)
   - Able to activate any function (0-31)
-    - Showing of the roster function labels (from the wiThrottle server if provided)
+    - Showing of the roster function labels (from the EX-CommandStation if provided)
     - Quick access to the functions by pressing #. Temporarily enabled via the Extras menu (or permanently enabled in config_button.h)
     - Limited ability to configure which functions are sent to the first or all locos in a consist (defined in config_button.h)
   - Able to throw/close turnouts/points
@@ -155,7 +155,7 @@ Notes:
 - Keep a list of ip addresses and ports if mDNS doesn't provide any
 - Remember (for the current session only) recently selected locos
 - functions
- - Latching / non-latching for the function to be provided by the roster entry of wiThrottle server
+ - Latching / non-latching for the functions to be provided by the roster entry of EEX-CommandStation
 
 
 ### Command menu:
