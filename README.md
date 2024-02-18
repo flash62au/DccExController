@@ -119,7 +119,6 @@ Notes:
 - Rudimentary on-the-fly consists
 - Assign commands directly to the 1-9 buttons (in the sketch) (see list below)
   - This is done in config_button.h
-  - Latching / non-latching for the function is provided by the roster entry of wiThrottle server
 - Optional ability to assign commands directly to the 1-7 additional buttons (in the sketch) (see list below)
   - These are defined config_button.h
 - Command menu (see below for full list) including:
@@ -144,7 +143,7 @@ Notes:
   - Disconnect / Reconnect
   - Put ESP32 in deep sleep and restart it
 - Have up to 6 throttles, each with an unlimited number of locos in consist. Default is 2 throttles, which can be increased or decreased temporarily via the Extras menu (or permanently enabled in config_button.h)
-- Limited dealing with unexpected disconnects.  It will throw you back to the WiThtottle Server selection screen.
+- Limited dealing with unexpected disconnects.  It will throw you back to the WiThrottle Server selection screen.
 - Boundary between short and long DCC addresses can be configured in config_buttons.h
 - The default speed step (per encoder click) can be configured in config_buttons.h
 - The controller will automatically shut down if no SSID is selected or entered in 4 minutes (to conserve the battery)
@@ -155,6 +154,9 @@ Notes:
   - automatic attempt to reconnect
 - Keep a list of ip addresses and ports if mDNS doesn't provide any
 - Remember (for the current session only) recently selected locos
+- functions
+ - Latching / non-latching for the function to be provided by the roster entry of wiThrottle server
+
 
 ### Command menu:
 - 0-9 keys = pressing these directly will do whatever you has been preset in the sketch for them to do  (see \# below)
