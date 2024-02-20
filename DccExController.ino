@@ -138,11 +138,6 @@ boolean functionMomentary[6][MAX_FUNCTIONS]; // set to maximum possible (6 throt
 // consist function follow
 int functionFollow[6][MAX_FUNCTIONS];   // set to maximum possible (6 throttles)
 
-// function default latching
-bool f0Latching = F0_LATCHING;
-bool f1Latching = F1_LATCHING;
-bool f2Latching = F2_LATCHING;
-
 // speedstep
 int currentSpeedStep[6];   // set to maximum possible (6 throttles)
 
