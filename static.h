@@ -1,5 +1,5 @@
 const String appName = "DccExController";
-const String appVersion = "    Version 0.06";
+const String appVersion = "    Version 0.08";
 const String msg_start = "Start";
 
 const String menu_menu =                   "* Menu                # Key Defs";
@@ -243,10 +243,26 @@ const char ssidPasswordBlankChar = 164;
   #define AUTO_CONNECT_TO_FIRST_WITHROTTLE_SERVER true
 #endif
 
+#ifndef F0_LATCHING
+  #define F0_LATCHING true
+#endif
+
 #ifndef F1_LATCHING
   #define F1_LATCHING false
 #endif
 
 #ifndef F2_LATCHING
   #define F2_LATCHING false
+#endif
+
+#ifndef F0_LABEL
+  #define F0_LABEL "Light"
+#endif
+
+#ifndef F1_LABEL
+  #define F1_LABEL "Bell"
+#endif
+
+#ifndef F2_LABEL
+  #define F2_LABEL "Horn"
 #endif

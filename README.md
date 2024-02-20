@@ -237,6 +237,13 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 
 ## Change Log
 
+### V0.08
+- Will now use function latching from the roster, if the loco is selected from the roster
+- F0 default to latching - can be overridden (see config_buttons_example.h)
+
+### V0.07
+- F0 default to latching - can be overridden (see config_buttons_example.h)
+
 ### V0.06
 - temporary solution for latching buttons
 - F1 and F2 default to momentary - can be overridden (see config_buttons_example.h)

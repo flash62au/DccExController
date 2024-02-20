@@ -132,11 +132,14 @@ boolean functionStates[6][MAX_FUNCTIONS];   // set to maximum possible (6 thrott
 
 // function labels
 String functionLabels[6][MAX_FUNCTIONS];   // set to maximum possible (6 throttles)
+// function momentary
+boolean functionMomentary[6][MAX_FUNCTIONS]; // set to maximum possible (6 throttles)
 
 // consist function follow
 int functionFollow[6][MAX_FUNCTIONS];   // set to maximum possible (6 throttles)
 
 // function default latching
+bool f0Latching = F0_LATCHING;
 bool f1Latching = F1_LATCHING;
 bool f2Latching = F2_LATCHING;
 
@@ -1448,31 +1451,14 @@ void doKeyPress(char key, boolean pressed) {
 }
 
 void doDirectCommand (char key, boolean pressed) {
-  debug_print("doDirectCommand(): "); debug_print(key);  debug_print("  press?: "); debug_println(pressed);
+  debug_print("doDirectCommand(): key: "); debug_print(key);  debug_print(" pressed: "); debug_println(pressed); 
   int buttonAction = buttonActions[(key - '0')];
   if (buttonAction!=FUNCTION_NULL) {
     if ( (buttonAction>=FUNCTION_0) && (buttonAction<=FUNCTION_31) ) {
-
-      // start - temporary solution for latching buttons
-
-      // for latching functions - send the press=false only if currently 'pressed'
-      if ( ( ((buttonAction==1) && (f1Latching)) || ((buttonAction==2) && (f2Latching)) 
-            || (buttonAction==0) || (buttonAction>2) )
-            && (functionStates[currentThrottleIndex][buttonAction]) ) {
-        if (pressed) { // second press
-          debug_println("doDirectCommand(): Second press on a latching function");
-          doDirectFunction(currentThrottleIndex, buttonAction, false);
-        } // else do nothing on release
-        return;
-      }
-
-      // end - temporary solution for latching buttons
-
-      // momentary - send both press and release
-      doDirectFunction(currentThrottleIndex, buttonAction, pressed);
-  } else {
+      doDirectCommandFunction(currentThrottleIndex, buttonAction, pressed);
+    } else {       
       if (pressed) { // only process these on the key press, not the release
-        doDirectAction(buttonAction);
+          doDirectAction(buttonAction);
       }
     }
   }
@@ -1484,7 +1470,7 @@ void doDirectAdditionalButtonCommand (int buttonIndex, boolean pressed) {
   int buttonAction = additionalButtonActions[buttonIndex];
   if (buttonAction!=FUNCTION_NULL) {
     if ( (buttonAction>=FUNCTION_0) && (buttonAction<=FUNCTION_31) ) {
-      doDirectFunction(currentThrottleIndex, buttonAction, pressed);
+      doDirectCommandFunction(currentThrottleIndex, buttonAction, pressed);
   } else {
       if (pressed) { // only process these on the key press, not the release
         doDirectAction(buttonAction);
@@ -1492,6 +1478,23 @@ void doDirectAdditionalButtonCommand (int buttonIndex, boolean pressed) {
     }
   }
   // debug_println("doDirectAdditionalButtonCommand(): end ");
+}
+
+void doDirectCommandFunction(int currentThrottleIndex, int buttonAction, boolean pressed) {
+  debug_print("doDirectCommandFunction(): "); debug_println(buttonAction);  debug_print(" pressed: "); debug_println(pressed); 
+  if (functionMomentary[currentThrottleIndex][buttonAction])  { // is momentary
+    debug_print("doDirectCommandFunction(): function is Momentary"); 
+    doDirectFunction(currentThrottleIndex, buttonAction, pressed);
+    return;
+  }
+  debug_print("doDirectCommandFunction(): function is Latching"); 
+  if (pressed){ // onKeyDown only
+    if (functionStates[currentThrottleIndex][buttonAction] ) { // if function true set false
+      doDirectFunction(currentThrottleIndex, buttonAction, false);
+    } else { // if function false set true
+      doDirectFunction(currentThrottleIndex, buttonAction, true);
+    } 
+  }
 }
 
 void doDirectAction(int buttonAction) {
@@ -1590,6 +1593,7 @@ void doMenu() {
           debug_print("XXX ");
           debug_println(throttles[currentThrottleIndex]->getLocoCount());
           resetFunctionStates(currentThrottleIndex);
+          loadDefaultFunctionLabels(currentThrottleIndex);
           writeOledSpeed();
         } else {
           page = 0;
@@ -1746,12 +1750,13 @@ void loadFunctionLabels(int multiThrottleIndex) {  // from Roster entry
   debug_println("loadFunctionLabels()");
   if (throttles[multiThrottleIndex]->getLocoCount() > 0) {
     for (int i=0; i<MAX_FUNCTIONS; i++) {
-      // char* fName = throttles[multiThrottleIndex]->getFirst()->getLoco()->getFunctionName(i);
       char* fName = throttles[multiThrottleIndex]->getFirst()->getLoco()->getFunctionName(i);
+      bool fMomentary = throttles[multiThrottleIndex]->getFirst()->getLoco()->isFunctionMomentary(i);
       if (fName != nullptr) {
         // debug_print("loadFunctionLabels() "); 
         // debug_println(fName);
         functionLabels[multiThrottleIndex][i] = fName;
+        functionMomentary[multiThrottleIndex][i] = fMomentary;
       // } else {
       //   debug_println("loadFunctionLabels() blank"); 
       }
@@ -1760,10 +1765,26 @@ void loadFunctionLabels(int multiThrottleIndex) {  // from Roster entry
   debug_println("loadFunctionLabels() end"); 
 }
 
+void loadDefaultFunctionLabels(int multiThrottleIndex) {
+  if (throttles[multiThrottleIndex]->getLocoCount() == 1) {  // only do this for the first loco in the consist
+    resetFunctionLabels(multiThrottleIndex);
+    functionLabels[multiThrottleIndex][0] = F0_LABEL;
+    functionMomentary[multiThrottleIndex][0] = !F0_LATCHING;
+    functionLabels[multiThrottleIndex][1] = F1_LABEL;
+    functionMomentary[multiThrottleIndex][1] = !F1_LATCHING;
+    functionLabels[multiThrottleIndex][2] = F2_LABEL;
+    functionMomentary[multiThrottleIndex][2] = !F2_LATCHING;
+    for (int i=3; i<MAX_FUNCTIONS; i++) {
+      functionMomentary[multiThrottleIndex][i] = false;
+    }
+  }
+}
+
 void resetFunctionLabels(int multiThrottleIndex) {
   debug_print("resetFunctionLabels(): "); debug_println(multiThrottleIndex);
   for (int i=0; i<MAX_FUNCTIONS; i++) {
     functionLabels[multiThrottleIndex][i] = "";
+    functionMomentary[multiThrottleIndex][i] = "";
   }
   functionPage = 0;
 }
@@ -2351,14 +2372,19 @@ void writeOledFunctionList(String soFar) {
     clearOledArray();
     if (throttles[currentThrottleIndex]->getLocoCount() > 0 ) {
       int j = 0; int k = 0;
+      int truncateAt = 9;
       for (int i=0; i<10; i++) {
         k = (functionPage*10) + i;
         if (k < MAX_FUNCTIONS) {
           j = (i<5) ? i : i+1;
           // if (functionLabels[currentThrottleIndex][k].length()>0) {
-            oledText[j] = String(i) + ": " 
-            + ((k<10) ? functionLabels[currentThrottleIndex][k].substring(0,10) : String(k) 
-            + "-" + functionLabels[currentThrottleIndex][k].substring(0,7)) ;
+            oledText[j] = String(i) + ": ";
+            if (k>=10) {
+              oledText[j] = oledText[j] + String(k);
+              truncateAt = 7;
+            }
+            oledText[j] = oledText[j] + ((functionMomentary[currentThrottleIndex][k]) ? "." : " ");
+            oledText[j] = oledText[j] + functionLabels[currentThrottleIndex][k].substring(0,truncateAt) ;
             
             if (functionStates[currentThrottleIndex][k]) {
               oledTextInvert[j] = true;

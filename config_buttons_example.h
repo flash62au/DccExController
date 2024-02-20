@@ -132,6 +132,15 @@
 // Default latching/momentary functions - Direct mapping only 
 
 // uncomment either or both of these lines if you wish to make F1 and/or F2 latching = true or momentary = false
-// default is both are momentary
+// F1 & F1 default to momentary
+//#define F0_LATCHING false
 //#define F1_LATCHING true
 //#define F2_LATCHING true
+
+// *******************************************************************************************************************
+// Default function labels
+
+// uncomment sny of these lines if you wish to change the labels
+//#define F0_LABEL "Light"
+//#define F1_LABEL "Bell"
+//#define F2_LABEL "Horn"
