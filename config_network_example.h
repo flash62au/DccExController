@@ -30,3 +30,11 @@ const String passwords[maxSsids] = {"password1", "password2", "password3", "pass
 // (default, if not specified is 500)
 //#define MAX_BUFFER_SIZE 1000
 
+// *******************************************************************************************************************
+// Roster selection
+// 
+// uncomment this line if you wish the DccEXcontroller to search the roster when to enter a dcc address
+// and use the roster entry if it finds it
+
+// #define SEARCH_ROSTER_ON_ENTRY_OF_DCC_ADDRESS true
+

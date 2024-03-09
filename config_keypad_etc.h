@@ -106,3 +106,11 @@ boolean additionalButtonLastRead[MAX_ADDITIONAL_BUTTONS] = {0,0,0,0,0,0,0};
 #else
     OLED_TYPE
 #endif
+
+// *******************************************************************************************************************
+// Roster selection
+// 
+// uncomment this line if you wish the DccEXcontroller to search the roster when to enter a dcc address
+// and use the roster entry if it finds it
+
+#define SEARCH_ROSTER_ON_ENTRY_OF_DCC_ADDRESS true

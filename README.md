@@ -237,6 +237,10 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 
 ## Change Log
 
+### V0.10
+ - Additional logging
+ - addition of code and a #define SEARCH_ROSTER_ON_ENTRY_OF_DCC_ADDRESS  (from FeliceV)
+
 ### V0.09
  - fix for the debounce of the rotary encoder button. Will now ignore rotations when the button is pressed for (default) 200ms.  The #define for the debounce has been moved from config_keypad_etc.h to config_buttons as: #define ROTARY_ENCODER_DEBOUNCE_TIME 200
 

@@ -111,6 +111,8 @@ int rosterAddress[maxRoster];
 int page = 0;
 int functionPage = 0;
 
+boolean searchRosterOnEntryOfDccAddress = SEARCH_ROSTER_ON_ENTRY_OF_DCC_ADDRESS;
+
 // turnout variables
 int turnoutListSize = 0;
 int turnoutListIndex[maxTurnoutList]; 
@@ -266,10 +268,7 @@ class MyDelegate : public DCCEXProtocolDelegate {
       debug_println(patch);
     }
     virtual void receivedLocoUpdate(Loco* loco) {
-      debug_print("receivedLocoUpdate: ("); debug_print(millis()); 
-      debug_print(") loco: "); debug_print(loco->getAddress()); 
-      debug_print(" speed: "); debug_print(loco->getSpeed()); 
-      debug_println("");
+      debugLocoSpeed("receivedLocoUpdate: ", loco); 
       _processLocoUpdate(loco);
     }
     void receivedTrackPower(TrackPower state) { 
@@ -1596,12 +1595,29 @@ void doMenu() {
         if (menuCommand.length()>1) {
           address = menuCommand.substring(1, menuCommand.length()).toInt();
           debug_print("add Loco: "); debug_println(address);
-          Loco* loco1 = new Loco(address, LocoSource::LocoSourceEntry);
-          throttles[currentThrottleIndex]->addLoco(loco1,FacingForward);
-          debug_print("XXX ");
-          debug_println(throttles[currentThrottleIndex]->getLocoCount());
-          resetFunctionStates(currentThrottleIndex);
-          loadDefaultFunctionLabels(currentThrottleIndex);
+          
+          // Loco* loco1 = new Loco(address, LocoSource::LocoSourceEntry);
+          // throttles[currentThrottleIndex]->addLoco(loco1,FacingForward);
+          // debug_println(throttles[currentThrottleIndex]->getLocoCount());
+          // resetFunctionStates(currentThrottleIndex);
+          // loadDefaultFunctionLabels(currentThrottleIndex);
+
+          Loco* loco1 = nullptr;
+          loco1 = dccexProtocol.findLocoInRoster(address);
+          if ((searchRosterOnEntryOfDccAddress) && ( loco1 == nullptr )) {
+            loco1 = new Loco(address, LocoSource::LocoSourceEntry);
+            throttles[currentThrottleIndex]->addLoco(loco1,FacingForward);
+            debug_print("Add Loco: LocoNotInRoster ");
+            debug_println(throttles[currentThrottleIndex]->getLocoCount());
+            resetFunctionStates(currentThrottleIndex);
+            loadDefaultFunctionLabels(currentThrottleIndex);  
+          } else {
+            throttles[currentThrottleIndex]->addLoco(loco1,FacingForward);
+            debug_print("Add loco: LocoInRoster ");
+            debug_println(throttles[currentThrottleIndex]->getLocoCount());
+            resetFunctionStates(currentThrottleIndex);
+            loadFunctionLabels(currentThrottleIndex);
+          }
           writeOledSpeed();
         } else {
           page = 0;
@@ -1860,6 +1876,11 @@ void speedSet(int multiThrottleIndex, int amt) {
     throttles[multiThrottleIndex]->setSpeed(newSpeed);
     currentSpeed[multiThrottleIndex] = newSpeed;
     debug_print("Speed Set: "); debug_println(newSpeed);
+    debugLocoSpeed("setspeed() first loco in consist: ", 
+      throttles[currentThrottleIndex]->getFirst()->getLoco()->getAddress(),
+      throttles[currentThrottleIndex]->getFirst()->getLoco()->getSpeed(),
+      throttles[currentThrottleIndex]->getFirst()->getLoco()->getDirection()
+      );
 
     // used to avoid bounce
     lastSpeedSentTime = millis();
@@ -1988,6 +2009,12 @@ void changeDirection(int multiThrottleIndex, Direction direction) {
     currentDirection[multiThrottleIndex] = direction;
     debug_print("Change direction(): "); debug_println( (direction==Forward) ? "Forward" : "Reverse");
     throttles[multiThrottleIndex]->setDirection(direction);
+    debugLocoSpeed("changeDirection() first loco in consist: ", 
+      throttles[currentThrottleIndex]->getFirst()->getLoco()->getAddress(),
+      throttles[currentThrottleIndex]->getFirst()->getLoco()->getSpeed(),
+      throttles[currentThrottleIndex]->getFirst()->getLoco()->getDirection()
+      );
+
   }
   writeOledSpeed();
   // debug_println("Change direction(): end "); 
@@ -2270,9 +2297,11 @@ void _processLocoUpdate(Loco* loco) {
         if ( (lastSpeedThrottleIndex != i) || ((millis()-lastSpeedSentTime)>2000) ) {
           currentSpeed[i] = loco->getSpeed();
           currentDirection[i] = loco->getDirection();
+          debugLocoSpeed("Received Speed: (" + String(lastSpeedThrottleIndex) + ") ", loco);
           displayUpdateFromWit(i);
         } else {
-          debug_print("Received Speed: skipping response: ("); debug_print(lastSpeedThrottleIndex); debug_print(") speed: "); debug_println(loco->getSpeed());
+          // debug_print("Received Speed: skipping response: ("); debug_print(lastSpeedThrottleIndex); debug_print(") speed: "); debug_println(loco->getSpeed());
+          debugLocoSpeed("Received Speed: skipping response! ", loco);
         }
         for (int j=0; j<MAX_FUNCTIONS; j++) {
           int state = (loco->isFunctionOn(j)) ?  1 : 0;
@@ -2531,7 +2560,7 @@ void writeHeartbeatCheck() {
 }
 
 void writeOledSpeed() {
-  debug_println("writeOledSpeed() ");
+  // debug_println("writeOledSpeed() ");
   
   menuIsShowing = false;
   String sLocos = "";
@@ -2674,11 +2703,11 @@ void writeOledSpeed() {
 
   u8g2.sendBuffer();
 
-  debug_println("writeOledSpeed(): end");
+  // debug_println("writeOledSpeed(): end");
 }
 
 void writeOledFunctions() {
-  debug_println("writeOledFunctions():");
+  // debug_println("writeOledFunctions():");
   //  int x = 99;
   // bool anyFunctionsActive = false;
    for (int i=0; i < MAX_FUNCTIONS; i++) {
@@ -2717,7 +2746,7 @@ void writeOledFunctions() {
     // //     u8g2.drawHLine(0,19,128);
     //  }
    }
-  debug_println("writeOledFunctions(): end");
+  // debug_println("writeOledFunctions(): end");
 }
 
 void writeOledArray(boolean isThreeColums, boolean isPassword) {
@@ -2795,6 +2824,21 @@ void writeOledDirectCommands() {
   }
   writeOledArray(true, false);
   menuCommandStarted = false;
+}
+
+// *********************************************************************************
+// debug
+
+void debugLocoSpeed(String txt, Loco* loco) {
+  debugLocoSpeed(txt, loco->getAddress(), loco->getSpeed(), loco->getDirection()); 
+}
+
+void debugLocoSpeed(String txt, int locoId, int speed, Direction dir) {
+  debug_print(txt);
+  debug_print(" loco: "); debug_print(locoId); 
+  debug_print(" speed: "); debug_print(speed); 
+  debug_print(" dir: "); debug_print(dir); 
+  debug_println("");
 }
 
 // *********************************************************************************

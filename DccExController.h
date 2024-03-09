@@ -190,6 +190,8 @@ void writeOledArray(boolean, boolean, boolean, boolean);
 void clearOledArray(void);
 void writeOledDirectCommands(void);
 
+void debugLocoSpeed(String txt, Loco* loco);
+
 void deepSleepStart(void);
 void deepSleepStart(bool);
 
