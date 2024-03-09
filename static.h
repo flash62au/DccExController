@@ -1,5 +1,5 @@
 const String appName = "DccExController";
-const String appVersion = "    Version 0.08";
+const String appVersion = "    Version 0.09";
 const String msg_start = "Start";
 
 const String menu_menu =                   "* Menu                # Key Defs";
@@ -265,4 +265,8 @@ const char ssidPasswordBlankChar = 164;
 
 #ifndef F2_LABEL
   #define F2_LABEL "Horn"
+#endif
+
+#ifndef ROTARY_ENCODER_DEBOUNCE_TIME
+  #define ROTARY_ENCODER_DEBOUNCE_TIME 200
 #endif

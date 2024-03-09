@@ -160,6 +160,9 @@ int lastSpeedThrottleIndex = 0;
 
 const char* deviceName = DEVICE_NAME;
 
+static unsigned long rotaryEncoderButtonLastTimePressed = 0;
+const int rotaryEncoderButtonEncoderDebounceTime = ROTARY_ENCODER_DEBOUNCE_TIME;   // in miliseconds
+
 const boolean encoderRotationClockwiseIsIncreaseSpeed = ENCODER_ROTATION_CLOCKWISE_IS_INCREASE_SPEED;
 // false = Counterclockwise  true = clockwise
 
@@ -857,12 +860,12 @@ void rotary_onButtonClick() {
         && (keypadUseType!=KEYPAD_USE_ENTER_WITHROTTLE_SERVER)
         && (keypadUseType!=KEYPAD_USE_SELECT_SSID) 
         && (keypadUseType!=KEYPAD_USE_SELECT_SSID_FROM_FOUND) ) {
-      static unsigned long lastTimePressed = 0;
-      if (millis() - lastTimePressed < encoderDebounceTime) {   //ignore multiple press in that specified time
+      
+      if ( (millis() - rotaryEncoderButtonLastTimePressed) < rotaryEncoderButtonEncoderDebounceTime) {   //ignore multiple press in that specified time
         debug_println("encoder button debounce");
         return;
       }
-      lastTimePressed = millis();
+      rotaryEncoderButtonLastTimePressed = millis();
       // if (encoderButtonAction == SPEED_STOP_THEN_TOGGLE_DIRECTION) {
       //   if (throttles[currentThrottleIndex]->getLocoCount()>0) {
       //     if (currentSpeed[currentThrottleIndex] != 0) {
@@ -892,8 +895,18 @@ void rotary_onButtonClick() {
 
 void rotary_loop() {
   if (rotaryEncoder.encoderChanged()) {   //don't print anything unless value changed
+
     encoderValue = rotaryEncoder.readEncoder();
-     debug_print("Encoder From: "); debug_print(lastEncoderValue);  debug_print(" to: "); debug_println(encoderValue);
+    debug_print("Encoder From: "); debug_print(lastEncoderValue);  debug_print(" to: "); debug_println(encoderValue);
+
+    if ( (millis() - rotaryEncoderButtonLastTimePressed) < rotaryEncoderButtonEncoderDebounceTime) {   //ignore the encoder change if the button was pressed recently
+      debug_println("encoder button debounce - in Rotary_loop()");
+      return;
+    // } else {
+    //   debug_print("encoder button debounce - time since last press: ");
+    //   debug_println(millis() - rotaryEncoderButtonLastTimePressed);
+    }
+
     if (abs(encoderValue-lastEncoderValue) > 800) { // must have passed through zero
       if (encoderValue > 800) {
         lastEncoderValue = 1001; 

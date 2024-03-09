@@ -237,6 +237,9 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 
 ## Change Log
 
+### V0.09
+ - fix for the debounce of the rotary encoder button. Will now ignore rotations when the button is pressed for (default) 200ms.  The #define for the debounce has been moved from config_keypad_etc.h to config_buttons as: #define ROTARY_ENCODER_DEBOUNCE_TIME 200
+
 ### V0.08
 - Will now use function latching from the roster, if the loco is selected from the roster
 - F0 default to latching - can be overridden (see config_buttons_example.h)
