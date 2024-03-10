@@ -865,6 +865,7 @@ void rotary_onButtonClick() {
         return;
       }
       rotaryEncoderButtonLastTimePressed = millis();
+      debug_println("encoder button pressed");
       // if (encoderButtonAction == SPEED_STOP_THEN_TOGGLE_DIRECTION) {
       //   if (throttles[currentThrottleIndex]->getLocoCount()>0) {
       //     if (currentSpeed[currentThrottleIndex] != 0) {
@@ -878,7 +879,6 @@ void rotary_onButtonClick() {
       // } else {
         doDirectAction(encoderButtonAction);
       // }
-      debug_println("encoder button pressed");
       writeOledSpeed();
     }  else {
       deepSleepStart();
@@ -2843,7 +2843,7 @@ void debugLocoSpeed(String txt, int locoId, int speed, Direction dir) {
   debug_print(txt);
   debug_print(" loco: "); debug_print(locoId); 
   debug_print(" speed: "); debug_print(speed); 
-  debug_print(" dir: "); debug_print( (dir == Forward ? "Reverse" : "Forward") ); 
+  debug_print(" dir: "); debug_print( (dir == Forward ? "Forward" : "Reverse" ) ); 
   debug_println("");
 }
 
