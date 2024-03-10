@@ -1604,7 +1604,8 @@ void doMenu() {
 
           Loco* loco1 = nullptr;
           loco1 = dccexProtocol.findLocoInRoster(address);
-          if ((searchRosterOnEntryOfDccAddress) && ( loco1 == nullptr )) {
+          if ( ( loco1 == nullptr )
+          || ((!searchRosterOnEntryOfDccAddress) && ( loco1 != nullptr ))) {
             loco1 = new Loco(address, LocoSource::LocoSourceEntry);
             throttles[currentThrottleIndex]->addLoco(loco1,FacingForward);
             debug_print("Add Loco: LocoNotInRoster ");
@@ -2007,7 +2008,7 @@ void changeDirection(int multiThrottleIndex, Direction direction) {
 
   if (locoCount > 0) {
     currentDirection[multiThrottleIndex] = direction;
-    debug_print("Change direction(): "); debug_println( (direction==Forward) ? "Forward" : "Reverse");
+    debug_print("changeDirection(): "); debug_println( (direction==Forward) ? "Forward" : "Reverse");
     throttles[multiThrottleIndex]->setDirection(direction);
     debugLocoSpeed("changeDirection() first loco in consist: ", 
       throttles[currentThrottleIndex]->getFirst()->getLoco()->getAddress(),
@@ -2287,21 +2288,23 @@ void _loadRouteList() {
 }
 
 void _processLocoUpdate(Loco* loco) {
-  debug_println("_processLocoUpdate(): (");
+  debugLocoSpeed("_processLocoUpdate() start:", loco);
+  boolean found = false;
   for (int i=0; i<maxThrottles; i++) {
     if (throttles[i]->getLocoCount()>0) {
       Loco* firstLoco = throttles[i]->getFirst()->getLoco();
       if (loco == firstLoco) {
+        found = true;
 
         // check for bounce. (intermediate speed sent back from the server, but is not up to date with the throttle)
         if ( (lastSpeedThrottleIndex != i) || ((millis()-lastSpeedSentTime)>2000) ) {
           currentSpeed[i] = loco->getSpeed();
           currentDirection[i] = loco->getDirection();
-          debugLocoSpeed("Received Speed: (" + String(lastSpeedThrottleIndex) + ") ", loco);
+          debugLocoSpeed("_processLocoUpdate() Processing Received Speed: (" + String(lastSpeedThrottleIndex) + ") ", loco);
           displayUpdateFromWit(i);
         } else {
           // debug_print("Received Speed: skipping response: ("); debug_print(lastSpeedThrottleIndex); debug_print(") speed: "); debug_println(loco->getSpeed());
-          debugLocoSpeed("Received Speed: skipping response! ", loco);
+          debugLocoSpeed("_processLocoUpdate() Skipping Received Speed! ", loco);
         }
         for (int j=0; j<MAX_FUNCTIONS; j++) {
           int state = (loco->isFunctionOn(j)) ?  1 : 0;
@@ -2313,6 +2316,9 @@ void _processLocoUpdate(Loco* loco) {
         }
       }
     }
+  }
+  if (!found) {
+    debug_println("_processLocoUpdate() loco not found");  
   }
   debug_println("_processLocoUpdate() end");
 }
@@ -2837,7 +2843,7 @@ void debugLocoSpeed(String txt, int locoId, int speed, Direction dir) {
   debug_print(txt);
   debug_print(" loco: "); debug_print(locoId); 
   debug_print(" speed: "); debug_print(speed); 
-  debug_print(" dir: "); debug_print(dir); 
+  debug_print(" dir: "); debug_print( (dir == Forward ? "Reverse" : "Forward") ); 
   debug_println("");
 }
 

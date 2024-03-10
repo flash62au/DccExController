@@ -237,6 +237,10 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 
 ## Change Log
 
+### V0.11
+ - bug fix
+ - additional logging
+ 
 ### V0.10
  - Additional logging
  - addition of code and a #define SEARCH_ROSTER_ON_ENTRY_OF_DCC_ADDRESS  (from FeliceV)
