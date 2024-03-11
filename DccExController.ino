@@ -113,6 +113,16 @@ int functionPage = 0;
 
 boolean searchRosterOnEntryOfDccAddress = SEARCH_ROSTER_ON_ENTRY_OF_DCC_ADDRESS;
 
+// Broadcast msessage
+String broadcastMessageText = "";
+long broadcastMessageTime = 0;
+
+// remember oled state
+int lastOledScreen = 0;
+String lastOledStringParameter = "";
+int lastOledIntParameter = 0;
+boolean lastOledBooleanParameter = false;
+
 // turnout variables
 int turnoutListSize = 0;
 int turnoutListIndex[maxTurnoutList]; 
@@ -267,6 +277,13 @@ class MyDelegate : public DCCEXProtocolDelegate {
       debug_print(".");
       debug_println(patch);
     }
+    void receivedMessage(char* message) {
+      debug_print("Broadcast Message: ");
+      debug_println(message);
+      broadcastMessageText = String(message);
+      broadcastMessageTime = millis();
+      refreshOled();
+    }
     virtual void receivedLocoUpdate(Loco* loco) {
       debugLocoSpeed("receivedLocoUpdate: ", loco); 
       _processLocoUpdate(loco);
@@ -275,7 +292,8 @@ class MyDelegate : public DCCEXProtocolDelegate {
       debug_print("Received TrackPower: "); debug_println(state);
       if (trackPower != state) {
         trackPower = state;
-        displayUpdateFromWit(-1); // dummry multithrottle
+        // displayUpdateFromWit(-1); // dummy multithrottlehumm
+        refreshOled();
       }
     }
     void receivedRosterList() {
@@ -383,7 +401,8 @@ void browseSsids() { // show the found SSIDs
 
     writeOledFoundSSids("");
 
-    oledText[5] = menu_select_ssids_from_found;
+    // oledText[5] = menu_select_ssids_from_found;
+    setMenuTextForOled(menu_select_ssids_from_found);
     writeOledArray(false, false);
 
     keypadUseType = KEYPAD_USE_SELECT_SSID_FROM_FOUND;
@@ -472,7 +491,8 @@ void showListOfSsids() {  // show the list from the specified values in config_n
     }
 
     if (maxSsids > 0) {
-      oledText[5] = menu_select_ssids;
+      // oledText[5] = menu_select_ssids;
+      setMenuTextForOled(menu_select_ssids);
     }
     writeOledArray(false, false);
 
@@ -674,7 +694,8 @@ void browseWitService() {
     }
 
     if (foundWitServersCount > 0) {
-      oledText[5] = menu_select_wit_service;
+      // oledText[5] = menu_select_wit_service;
+      setMenuTextForOled(menu_select_wit_service);
     }
     writeOledArray(false, false);
 
@@ -732,6 +753,7 @@ void connectWitServer() {
     debug_print("Connected to server: ");   debug_println(selectedWitServerIP); debug_println(selectedWitServerPort);
 
     // Pass the communication to WiThrottle
+    dccexProtocol.setLogStream(&Serial);
     dccexProtocol.connect(&client);
     debug_println("WiThrottle connected");
 
@@ -744,9 +766,11 @@ void connectWitServer() {
 
     oledText[3] = msg_connected;
     if (!hashShowsFunctionsInsteadOfKeyDefs) {
-      oledText[5] = menu_menu;
+      // oledText[5] = menu_menu;
+      setMenuTextForOled(menu_menu);
     } else {
-      oledText[5] = menu_menu_hash_is_functions;
+      // oledText[5] = menu_menu_hash_is_functions;
+      setMenuTextForOled(menu_menu_hash_is_functions);
     }
     writeOledArray(false, false, true, true);
 
@@ -762,7 +786,8 @@ void enterWitServer() {
     setAppnameForOled(); 
     oledText[1] = msg_no_services_found_entry_required;
     oledText[3] = witServerIpAndPortConstructed;
-    oledText[5] = menu_select_wit_entry;
+    // oledText[5] = menu_select_wit_entry;
+    setMenuTextForOled(menu_select_wit_entry);
     writeOledArray(false, false, true, true);
     witServerIpAndPortChanged = false;
   }
@@ -1877,11 +1902,7 @@ void speedSet(int multiThrottleIndex, int amt) {
     throttles[multiThrottleIndex]->setSpeed(newSpeed);
     currentSpeed[multiThrottleIndex] = newSpeed;
     debug_print("Speed Set: "); debug_println(newSpeed);
-    debugLocoSpeed("setspeed() first loco in consist: ", 
-      throttles[currentThrottleIndex]->getFirst()->getLoco()->getAddress(),
-      throttles[currentThrottleIndex]->getFirst()->getLoco()->getSpeed(),
-      throttles[currentThrottleIndex]->getFirst()->getLoco()->getDirection()
-      );
+    debugLocoSpeed("setspeed() first loco in consist: ", throttles[currentThrottleIndex]->getFirst()->getLoco());
 
     // used to avoid bounce
     lastSpeedSentTime = millis();
@@ -2010,11 +2031,7 @@ void changeDirection(int multiThrottleIndex, Direction direction) {
     currentDirection[multiThrottleIndex] = direction;
     debug_print("changeDirection(): "); debug_println( (direction==Forward) ? "Forward" : "Reverse");
     throttles[multiThrottleIndex]->setDirection(direction);
-    debugLocoSpeed("changeDirection() first loco in consist: ", 
-      throttles[currentThrottleIndex]->getFirst()->getLoco()->getAddress(),
-      throttles[currentThrottleIndex]->getFirst()->getLoco()->getSpeed(),
-      throttles[currentThrottleIndex]->getFirst()->getLoco()->getDirection()
-      );
+    debugLocoSpeed("changeDirection() first loco in consist: ", throttles[currentThrottleIndex]->getFirst()->getLoco() );
 
   }
   writeOledSpeed();
@@ -2331,6 +2348,51 @@ void setAppnameForOled() {
   oledText[0] = appName; oledText[6] = appVersion; 
 }
 
+void setMenuTextForOled(int menuTextIndex) {
+  oledText[5] = menu_text[menuTextIndex];
+  if (broadcastMessageText!="") {
+    if (millis()-broadcastMessageTime < 10000) {
+      oledText[5] = broadcastMessageText;
+    } else {
+      broadcastMessageText = "";
+    }
+  }
+}
+
+void refreshOled() {
+     debug_print("refreshOled(): ");
+     debug_println(lastOledScreen);
+  switch (lastOledScreen) {
+    case last_oled_screen_speed:
+      writeOledSpeed();
+      break;
+    case last_oled_screen_turnout_list:
+      writeOledTurnoutList(lastOledStringParameter, lastOledBooleanParameter);
+      break;
+    case last_oled_screen_route_list:
+      writeOledRouteList(lastOledStringParameter);
+      break;
+    case last_oled_screen_function_list:
+      writeOledFunctionList(lastOledStringParameter);
+      break;
+    case last_oled_screen_menu:
+      writeOledMenu(lastOledStringParameter);
+      break;
+    case last_oled_screen_extra_submenu:
+      writeOledExtraSubMenu();
+      break;
+    case last_oled_screen_all_locos:
+      writeOledAllLocos(lastOledBooleanParameter);
+      break;
+    case last_oled_screen_edit_consist:
+      writeOledEditConsist();
+      break;
+    case last_oled_screen_direct_commands:
+      writeOledDirectCommands();
+      break;
+  }
+}
+
 void writeOledFoundSSids(String soFar) {
   menuIsShowing = true;
   keypadUseType = KEYPAD_USE_SELECT_SSID_FROM_FOUND;
@@ -2349,6 +2411,9 @@ void writeOledFoundSSids(String soFar) {
 }
 
 void writeOledRoster(String soFar) {
+  lastOledScreen = last_oled_screen_roster;
+  lastOledStringParameter = soFar;
+
   menuIsShowing = true;
   keypadUseType = KEYPAD_USE_SELECT_ROSTER;
   if (soFar == "") { // nothing entered yet
@@ -2366,6 +2431,10 @@ void writeOledRoster(String soFar) {
 }
 
 void writeOledTurnoutList(String soFar, boolean action) {
+  lastOledScreen = last_oled_screen_roster;
+  lastOledStringParameter = soFar;
+  lastOledBooleanParameter = action;
+
   menuIsShowing = true;
   if (action) {  // thrown
     keypadUseType = KEYPAD_USE_SELECT_TURNOUTS_THROW;
@@ -2389,6 +2458,9 @@ void writeOledTurnoutList(String soFar, boolean action) {
 }
 
 void writeOledRouteList(String soFar) {
+  lastOledScreen = last_oled_screen_route_list;
+  lastOledStringParameter = soFar;
+
   menuIsShowing = true;
   keypadUseType = KEYPAD_USE_SELECT_ROUTES;
   if (soFar == "") { // nothing entered yet
@@ -2408,6 +2480,9 @@ void writeOledRouteList(String soFar) {
 }
 
 void writeOledFunctionList(String soFar) {
+  lastOledScreen = last_oled_screen_function_list;
+  lastOledStringParameter = soFar;
+
   menuIsShowing = true;
   keypadUseType = KEYPAD_USE_SELECT_FUNCTION;
   
@@ -2439,7 +2514,8 @@ void writeOledFunctionList(String soFar) {
     } else {
       oledText[2] = msg_throttle_number + String(currentThrottleIndex+1);
       oledText[3] = msg_no_loco_selected;
-      oledText[5] = menu_cancel;
+      // oledText[5] = menu_cancel;
+      setMenuTextForOled(menu_cancel);
     }
     writeOledArray(false, false);
   // } else {
@@ -2460,11 +2536,15 @@ void writeOledEnterPassword() {
   }
   oledText[0] = msg_enter_password;
   oledText[2] = tempSsidPasswordEntered;
-  oledText[5] = menu_enter_ssid_password;
+  // oledText[5] = menu_enter_ssid_password;
+  setMenuTextForOled(menu_enter_ssid_password);
   writeOledArray(false, true);
 }
 
 void writeOledMenu(String soFar) {
+  lastOledScreen = last_oled_screen_menu;
+  lastOledStringParameter = soFar;
+
   debug_print("writeOledMenu() : "); debug_println(soFar);
   menuIsShowing = true;
   bool drawTopLine = false;
@@ -2476,7 +2556,8 @@ void writeOledMenu(String soFar) {
       oledText[j-1] = String(i) + ": " + menuText[i][0];
     }
     oledText[10] = "0: " + menuText[0][0];
-    oledText[5] = menu_cancel;
+    // oledText[5] = menu_cancel;
+    setMenuTextForOled(menu_cancel);
     writeOledArray(false, false);
   } else {
     int cmd = menuCommand.substring(0, 1).toInt();
@@ -2498,7 +2579,8 @@ void writeOledMenu(String soFar) {
           if (throttles[currentThrottleIndex]->getLocoCount() <= 0 ) {
             oledText[2] = msg_throttle_number + String(currentThrottleIndex+1);
             oledText[3] = msg_no_loco_selected;
-            oledText[5] = menu_cancel;
+            // oledText[5] = menu_cancel;
+            setMenuTextForOled(menu_cancel);
           } 
           break;
         }
@@ -2514,6 +2596,8 @@ void writeOledMenu(String soFar) {
 }
 
 void writeOledExtraSubMenu() {
+  lastOledScreen = last_oled_screen_extra_submenu;
+
   int j = 0;
   for (int i=0; i<8; i++) {
     j = (i<4) ? i : i+2;
@@ -2522,6 +2606,9 @@ void writeOledExtraSubMenu() {
 }
 
 void writeOledAllLocos(bool hideLeadLoco) {
+  lastOledScreen = last_oled_screen_all_locos;
+  lastOledBooleanParameter = hideLeadLoco;
+
   int startAt = (hideLeadLoco) ? 1 :0;  // for the loco heading menu, we don't want to show the loco 0 (lead) as an option.
   debug_println("writeOledAllLocos(): ");
   int address;
@@ -2542,6 +2629,8 @@ void writeOledAllLocos(bool hideLeadLoco) {
 }
 
 void writeOledEditConsist() {
+  lastOledScreen = last_oled_screen_edit_consist;
+
   menuIsShowing = false;
   clearOledArray();
   debug_println("writeOledEditConsist(): ");
@@ -2566,8 +2655,9 @@ void writeHeartbeatCheck() {
 }
 
 void writeOledSpeed() {
+  lastOledScreen = last_oled_screen_speed;
+
   // debug_println("writeOledSpeed() ");
-  
   menuIsShowing = false;
   String sLocos = "";
   String sSpeed = "";
@@ -2641,9 +2731,9 @@ void writeOledSpeed() {
   }
 
   if (!hashShowsFunctionsInsteadOfKeyDefs) {
-      oledText[5] = menu_menu;
+      setMenuTextForOled(menu_menu);
     } else {
-    oledText[5] = menu_menu_hash_is_functions;
+    setMenuTextForOled(menu_menu_hash_is_functions);
   }
 
   writeOledArray(false, false, false, drawTopLine);
@@ -2713,6 +2803,8 @@ void writeOledSpeed() {
 }
 
 void writeOledFunctions() {
+  lastOledScreen = last_oled_screen_speed;
+
   // debug_println("writeOledFunctions():");
   //  int x = 99;
   // bool anyFunctionsActive = false;
@@ -2812,6 +2904,8 @@ void clearOledArray() {
 }
 
 void writeOledDirectCommands() {
+  lastOledScreen = last_oled_screen_direct_commands;
+
   oledDirectCommandsAreBeingDisplayed = true;
   clearOledArray();
   oledText[0] = direct_command_list;
@@ -2836,14 +2930,15 @@ void writeOledDirectCommands() {
 // debug
 
 void debugLocoSpeed(String txt, Loco* loco) {
-  debugLocoSpeed(txt, loco->getAddress(), loco->getSpeed(), loco->getDirection()); 
+  debugLocoSpeed(txt, loco->getAddress(), loco->getSource(), loco->getSpeed(), loco->getDirection()); 
 }
 
-void debugLocoSpeed(String txt, int locoId, int speed, Direction dir) {
+void debugLocoSpeed(String txt, int locoId, LocoSource source, int speed, Direction dir) {
   debug_print(txt);
   debug_print(" loco: "); debug_print(locoId); 
+  debug_print(" source: "); debug_print( (source == 0) ? "Roster" : "Entered"); 
   debug_print(" speed: "); debug_print(speed); 
-  debug_print(" dir: "); debug_print( (dir == Forward ? "Forward" : "Reverse" ) ); 
+  debug_print(" dir: "); debug_print( (dir == Forward) ? "Forward" : "Reverse" ); 
   debug_println("");
 }
 

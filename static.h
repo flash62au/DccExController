@@ -1,24 +1,50 @@
 const String appName = "DccExController";
-const String appVersion = "    Version 0.11";
+const String appVersion = "    Version 0.12";
 const String msg_start = "Start";
 
-const String menu_menu =                   "* Menu                # Key Defs";
-const String menu_menu_hash_is_functions = "* Menu                          # Fn";
-const String menu_finish =                 "                        # Finish";
-const String menu_cancel =                 "* Cancel";
-const String menu_show_direct =            "                  # Show Direct";
-// const String menu_direct =                 "* Cancel        0-9 Select";
-const String menu_roster =                 "* Cancel      0-9      #Pg";
-const String menu_turnout_list =           "* Cancel      0-9      #Pg";
-const String menu_route_list =             "* Cancel      0-9      #Pg";
-const String menu_function_list =          "* Cancel      0-9      #Pg";
+const String menu_text[14] = {
+  "* Menu                # Key Defs",
+  "* Menu                          # Fn",
+  "                        # Finish",
+  "* Cancel",
+  "                  # Show Direct",
+  "* Cancel      0-9      #Pg",
+  "* Cancel      0-9      #Pg",
+  "* Cancel      0-9      #Pg",
+  "* Cancel      0-9      #Pg",
+  "0-4      # Entry      E.btn OFF",
+  "0-9   * Back  # Go   E.btn OFF",
+  "0-9     # Search      E.btn OFF",
+  "0-4    9 List  # Pg   E.btn OFF",
+  "E Chrs  E.btn Slct  # Go  * Bck"
+};
 
-const String menu_select_wit_service =      "0-4      # Entry      E.btn OFF";
-const String menu_select_wit_entry =        "0-9   * Back  # Go   E.btn OFF";
-const String menu_select_ssids =            "0-9     # Search      E.btn OFF";
-const String menu_select_ssids_from_found = "0-4    9 List  # Pg   E.btn OFF";
+const int menu_menu =                     0;
+const int menu_menu_hash_is_functions =   1;
+const int menu_finish =                   2;
+const int menu_cancel =                   3;
+const int menu_show_direct =              4;
+const int menu_roster =                   5;
+const int menu_turnout_list =             6;
+const int menu_route_list =               7;
+const int menu_function_list =            8;
+const int menu_select_wit_service =       9;
+const int menu_select_wit_entry =        10;
+const int menu_select_ssids =            11;
+const int menu_select_ssids_from_found = 12;
+const int menu_enter_ssid_password =     13;
 
-const String menu_enter_ssid_password =     "E Chrs  E.btn Slct  # Go  * Bck";
+const int last_oled_screen_speed =            0;
+const int last_oled_screen_roster =           1;
+const int last_oled_screen_turnout_list =     2;
+const int last_oled_screen_route_list =       3;
+const int last_oled_screen_function_list =    4;
+const int last_oled_screen_menu          =    5;
+const int last_oled_screen_extra_submenu =    6;
+const int last_oled_screen_all_locos =        7;
+const int last_oled_screen_edit_consist =     8;
+const int last_oled_screen_direct_commands =  9;
+
 
 const String direct_command_list = "Direct Commands";
 

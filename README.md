@@ -93,6 +93,7 @@ Notes:
     * Click *Upload* 
 
 Notes: 
+   * DccExController version 0.12 or later requires DCCEXProtocol version 0.0.10 or later.
    * DccExController version 0.02 or later requires DCCEXProtocol version 0.0.6 or later.
    * DccExController version 0.01 requires DCCEXProtocol version 0.0.3 or later.
    * The *WiFi.h* and *ESPmDNS.h* libraries were automatically installed for me when I installed the esp32 boards, however you may need to install them manually.
@@ -236,6 +237,9 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 
 
 ## Change Log
+
+### V0.12
+ - support for Broadcast Messages. - now requires DccExProtocol Library version 0.0.10
 
 ### V0.11
  - bug fix
