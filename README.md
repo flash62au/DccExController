@@ -239,7 +239,7 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 ## Change Log
 
 ### V0.12
- - support for Broadcast Messages. - now requires DccExProtocol Library version 0.0.10
+ - support for Broadcast Messages. - now requires DccExProtocol Library version 0.0.10 or later
 
 ### V0.11
  - bug fix

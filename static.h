@@ -79,6 +79,7 @@ const String msg_no_loco_selected =      "        No Loco selected";
 const String msg_enter_password =        "Enter Password";
 const String msg_guessed_ex_cs_wit_server = "'Guessed' EX-CS WiT server";
 const String bypass_wit_server_search =  "Bypass WiT server search";
+const String msg_no_functions =          "Function List - No Functions";
 
 const String msg_heartbeatCheckEnabled = "Heartbeat Check Enabled";
 const String msg_heartbeatCheckDisabled = "Heartbeat Check Disabled";
@@ -257,8 +258,8 @@ const char ssidPasswordBlankChar = 164;
   #define DCCEXCONTROLLER_DEBUG    0
 #endif
 
-#ifndef WITHROTTLE_PROTOCOL_DEBUG
-  #define WITHROTTLE_PROTOCOL_DEBUG   1
+#ifndef DCCEXPROTOCOL_DEBUG
+  #define DCCEXPROTOCOL_DEBUG   1
 #endif
 
 #ifndef AUTO_CONNECT_TO_FIRST_DEFINED_SERVER

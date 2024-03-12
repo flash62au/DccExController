@@ -170,8 +170,6 @@ int lastSpeedThrottleIndex = 0;
 // don't alter the assignments here
 // alter them in config_buttons.h
 
-const char* deviceName = DEVICE_NAME;
-
 static unsigned long rotaryEncoderButtonLastTimePressed = 0;
 const int rotaryEncoderButtonEncoderDebounceTime = ROTARY_ENCODER_DEBOUNCE_TIME;   // in miliseconds
 
@@ -296,6 +294,12 @@ class MyDelegate : public DCCEXProtocolDelegate {
         refreshOled();
       }
     }
+    // void receivedIndividualTrackPower(TrackPower state, int track) { 
+    //   debug_print("Received Indivdual TrackPower: "); 
+    //   debug_print(state);
+    //   debug_print(" : ");
+    //   debug_println(track);
+    // }
     void receivedRosterList() {
       debug_println("Received Roster List");
       _loadRoster();
@@ -362,6 +366,9 @@ void browseSsids() { // show the found SSIDs
   oledText[2] = msg_browsing_for_ssids;
   writeOledArray(false, false, true, true);
 
+  WiFi.setScanMethod(WIFI_ALL_CHANNEL_SCAN);
+  WiFi.setSortMethod(WIFI_CONNECT_AP_BY_SIGNAL);
+  
   int numSsids = WiFi.scanNetworks();
   while ( (numSsids == -1)
     && ((nowTime-startTime) <= 10000) ) { // try for 10 seconds
@@ -727,9 +734,6 @@ void selectWitServer(int selection) {
 void connectWitServer() {
   // Pass the delegate instance to dccexProtocol
   dccexProtocol.setDelegate(&myDelegate);
-#if WITHROTTLE_PROTOCOL_DEBUG == 0
-  dccexProtocol.setLogStream(&Serial);
-#endif
 
   debug_println("Connecting to the server...");
   clearOledArray(); 
@@ -753,13 +757,11 @@ void connectWitServer() {
     debug_print("Connected to server: ");   debug_println(selectedWitServerIP); debug_println(selectedWitServerPort);
 
     // Pass the communication to WiThrottle
-    dccexProtocol.setLogStream(&Serial);
+    #if DCCEXPROTOCOL_DEBUG == 0
+      dccexProtocol.setLogStream(&Serial);
+    #endif
     dccexProtocol.connect(&client);
     debug_println("WiThrottle connected");
-
-    // no equivalent
-    // dccexProtocol.setDeviceName(deviceName);  
-    // dccexProtocol.setDeviceID(String(deviceId));  
 
     dccexConnectionState = CONNECTION_STATE_CONNECTED;
     setLastServerResponseTime(true);
@@ -2352,7 +2354,7 @@ void setMenuTextForOled(int menuTextIndex) {
   oledText[5] = menu_text[menuTextIndex];
   if (broadcastMessageText!="") {
     if (millis()-broadcastMessageTime < 10000) {
-      oledText[5] = broadcastMessageText;
+      oledText[5] = "~" + broadcastMessageText;
     } else {
       broadcastMessageText = "";
     }
@@ -2431,7 +2433,7 @@ void writeOledRoster(String soFar) {
 }
 
 void writeOledTurnoutList(String soFar, boolean action) {
-  lastOledScreen = last_oled_screen_roster;
+  lastOledScreen = last_oled_screen_turnout_list;
   lastOledStringParameter = soFar;
   lastOledBooleanParameter = action;
 
@@ -2511,7 +2513,9 @@ void writeOledFunctionList(String soFar) {
         }
       }
       oledText[5] = "(" + String(functionPage) +  ") " + menu_function_list;
+      // setMenuTextForOled("(" + String(functionPage) +  ") " + menu_function_list);
     } else {
+      oledText[0] = msg_no_functions;
       oledText[2] = msg_throttle_number + String(currentThrottleIndex+1);
       oledText[3] = msg_no_loco_selected;
       // oledText[5] = menu_cancel;

@@ -78,7 +78,6 @@ extern int currentSpeedStep[];
 extern int heartBeatPeriod;
 extern long lastServerResponseTime;
 extern boolean heartbeatCheckEnabled;
-extern const char* deviceName;
 extern const boolean encoderRotationClockwiseIsIncreaseSpeed;
 extern const boolean toggleDirectionOnEncoderButtonPressWhenStationary;
 extern int buttonActions[];
