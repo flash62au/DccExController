@@ -2405,7 +2405,7 @@ void writeOledFoundSSids(String soFar) {
         oledText[i] = String(i) + ": " + foundSsids[(page*5)+i] + "   (" + foundSsidRssis[(page*5)+i] + ")" ;
       }
     }
-    oledText[5] = "(" + String(page) +  ") " + menu_select_ssids_from_found;
+    oledText[5] = "(" + String(page+1) +  ") " + menu_text[menu_select_ssids_from_found];
     writeOledArray(false, false);
   // } else {
   //   int cmd = menuCommand.substring(0, 1).toInt();
@@ -2425,7 +2425,7 @@ void writeOledRoster(String soFar) {
         oledText[i] = String(rosterIndex[i]) + ": " + rosterName[(page*5)+i] + " (" + rosterAddress[(page*5)+i] + ")" ;
       }
     }
-    oledText[5] = "(" + String(page) +  ") " + menu_roster;
+    oledText[5] = "(" + String(page+1) +  ") " + menu_text[menu_roster];
     writeOledArray(false, false);
   // } else {
   //   int cmd = menuCommand.substring(0, 1).toInt();
@@ -2452,7 +2452,7 @@ void writeOledTurnoutList(String soFar, boolean action) {
         oledText[j] = String(turnoutListIndex[i]) + ": " + turnoutListUserName[(page*10)+i].substring(0,10);
       }
     }
-    oledText[5] = "(" + String(page) +  ") " + menu_turnout_list;
+    oledText[5] = "(" + String(page+1) +  ") " + menu_text[menu_turnout_list];
     writeOledArray(false, false);
   // } else {
   //   int cmd = menuCommand.substring(0, 1).toInt();
@@ -2474,7 +2474,7 @@ void writeOledRouteList(String soFar) {
         oledText[j] = String(routeListIndex[i]) + ": " + routeListUserName[(page*10)+i].substring(0,10);
       }
     }
-    oledText[5] =  "(" + String(page) +  ") " + menu_route_list;
+    oledText[5] =  "(" + String(page+1) +  ") " + menu_text[menu_route_list];
     writeOledArray(false, false);
   // } else {
   //   int cmd = menuCommand.substring(0, 1).toInt();
@@ -2512,7 +2512,7 @@ void writeOledFunctionList(String soFar) {
           // }
         }
       }
-      oledText[5] = "(" + String(functionPage) +  ") " + menu_function_list;
+      oledText[5] = "(" + String(functionPage) +  ") " + menu_text[menu_function_list];
       // setMenuTextForOled("(" + String(functionPage) +  ") " + menu_function_list);
     } else {
       oledText[0] = msg_no_functions;
