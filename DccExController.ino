@@ -363,7 +363,7 @@ void browseSsids() { // show the found SSIDs
   debug_println("Browsing for ssids");
   clearOledArray(); 
   setAppnameForOled();
-  oledText[2] = msg_browsing_for_ssids;
+  oledText[2] = MSG_BROWSING_FOR_SSIDS;
   writeOledArray(false, false, true, true);
 
   WiFi.setScanMethod(WIFI_ALL_CHANNEL_SCAN);
@@ -404,7 +404,7 @@ void browseSsids() { // show the found SSIDs
       debug_println(foundSsids[i]);      
     }
 
-    clearOledArray(); oledText[10] = msg_ssids_found;
+    clearOledArray(); oledText[10] = MSG_SSIDS_FOUND;
 
     writeOledFoundSSids("");
 
@@ -473,13 +473,13 @@ void showListOfSsids() {  // show the list from the specified values in config_n
   writeOledArray(false, false);
 
   if (maxSsids == 0) {
-    oledText[1] = msg_no_ssids_found;
+    oledText[1] = MSG_NO_SSIDS_FOUND;
     writeOledArray(false, false, true, true);
     debug_println(oledText[1]);
   
   } else {
-    debug_print(maxSsids);  debug_println(msg_ssids_listed);
-    clearOledArray(); oledText[10] = msg_ssids_listed;
+    debug_print(maxSsids);  debug_println(MSG_SSIDS_LISTED);
+    clearOledArray(); oledText[10] = MSG_SSIDS_LISTED;
 
     for (int i = 0; i < maxSsids; ++i) {
       debug_print(i+1); debug_print(": "); debug_println(ssids[i]);
@@ -542,7 +542,7 @@ void connectSsid() {
     clearOledArray(); 
     setAppnameForOled(); 
     for (int i = 0; i < 3; ++i) {  // Try three times
-      oledText[1] = selectedSsid; oledText[2] =  msg_trying_to_connect + " (" + String(i) + ")";
+      oledText[1] = selectedSsid; oledText[2] =  String(MSG_TRYING_TO_CONNECT) + " (" + String(i) + ")";
       writeOledArray(false, false, true, true);
 
       nowTime = startTime;      
@@ -566,8 +566,8 @@ void connectSsid() {
     debug_println("");
     if (WiFi.status() == WL_CONNECTED) {
       debug_print("Connected. IP address: "); debug_println(WiFi.localIP());
-      oledText[2] = msg_connected; 
-      oledText[3] = msg_address_label + String(WiFi.localIP());
+      oledText[2] = MSG_CONNECTED; 
+      oledText[3] = MSG_ADDRESS_LABEL + String(WiFi.localIP());
       writeOledArray(false, false, true, true);
       // ssidConnected = true;
       ssidConnectionState = CONNECTION_STATE_CONNECTED;
@@ -576,7 +576,7 @@ void connectSsid() {
       // setup the bonjour listener
       if (!MDNS.begin("WiTcontroller")) {
         debug_println("Error setting up MDNS responder!");
-        oledText[2] = msg_bounjour_setup_failed;
+        oledText[2] = MSG_BOUNJOUR_SETUP_FAILED;
         writeOledArray(false, false, true, true);
         delay(2000);
         ssidConnectionState = CONNECTION_STATE_DISCONNECTED;
@@ -585,8 +585,8 @@ void connectSsid() {
       }
 
     } else {
-      debug_println(msg_connection_failed);
-      oledText[2] = msg_connection_failed;
+      debug_println(MSG_CONNECTION_FAILED);
+      oledText[2] = MSG_CONNECTION_FAILED;
       writeOledArray(false, false, true, true);
       delay(2000);
       
@@ -630,13 +630,13 @@ void browseWitService() {
   debug_printf("Browsing for service _%s._%s.local. on %s ... ", service, proto, selectedSsid.c_str());
   clearOledArray(); 
   oledText[0] = appName; oledText[6] = appVersion; 
-  oledText[1] = selectedSsid;   oledText[2] = msg_browsing_for_service;
+  oledText[1] = selectedSsid;   oledText[2] = MSG_BROWSING_FOR_SERVICE;
   writeOledArray(false, false, true, true);
 
   noOfWitServices = 0;
   if ( (selectedSsid.substring(0,6) == "DCCEX_") && (selectedSsid.length()==12) ) {
-    debug_println(bypass_wit_server_search);
-    oledText[1] = bypass_wit_server_search;
+    debug_println(BYPASS_WIT_SERVER_SEARCH);
+    oledText[1] = BYPASS_WIT_SERVER_SEARCH;
     writeOledArray(false, false, true, true);
     delay(500);
   } else {
@@ -674,12 +674,12 @@ void browseWitService() {
   if ( (selectedSsid.substring(0,6) == "DCCEX_") && (selectedSsid.length()==12) ) {
     foundWitServersIPs[foundWitServersCount].fromString("192.168.4.1");
     foundWitServersPorts[foundWitServersCount] = 2560;
-    foundWitServersNames[foundWitServersCount] = msg_guessed_ex_cs_wit_server;
+    foundWitServersNames[foundWitServersCount] = MSG_GUESSED_EX_CS_WIT_SERVER;
     foundWitServersCount++;
   }
 
   if (foundWitServersCount == 0) {
-    oledText[1] = msg_no_services_found;
+    oledText[1] = MSG_NO_SERVICES_FOUND;
     writeOledArray(false, false, true, true);
     debug_println(oledText[1]);
     delay(1000);
@@ -687,8 +687,8 @@ void browseWitService() {
     dccexConnectionState = CONNECTION_STATE_ENTRY_REQUIRED;
   
   } else {
-    debug_print(noOfWitServices);  debug_println(msg_services_found);
-    clearOledArray(); oledText[1] = msg_services_found;
+    debug_print(noOfWitServices);  debug_println(MSG_SERVICES_FOUND);
+    clearOledArray(); oledText[1] = MSG_SERVICES_FOUND;
 
     for (int i = 0; i < foundWitServersCount; ++i) {
       // Print details for each service found
@@ -739,12 +739,12 @@ void connectWitServer() {
   clearOledArray(); 
   setAppnameForOled(); 
   oledText[1] = selectedWitServerIP.toString() + " : " + String(selectedWitServerPort); 
-  oledText[2] = selectedWitServerName; oledText[3] + msg_connecting;
+  oledText[2] = selectedWitServerName; oledText[3] + MSG_CONNECTING;
   writeOledArray(false, false, true, true);
 
   if (!client.connect(selectedWitServerIP, selectedWitServerPort)) {
-    debug_println(msg_connection_failed);
-    oledText[3] = msg_connection_failed;
+    debug_println(MSG_CONNECTION_FAILED);
+    oledText[3] = MSG_CONNECTION_FAILED;
     writeOledArray(false, false, true, true);
     delay(5000);
     
@@ -766,7 +766,7 @@ void connectWitServer() {
     dccexConnectionState = CONNECTION_STATE_CONNECTED;
     setLastServerResponseTime(true);
 
-    oledText[3] = msg_connected;
+    oledText[3] = MSG_CONNECTED;
     if (!hashShowsFunctionsInsteadOfKeyDefs) {
       // oledText[5] = menu_menu;
       setMenuTextForOled(menu_menu);
@@ -786,7 +786,7 @@ void enterWitServer() {
     debug_println("enterWitServer()");
     clearOledArray(); 
     setAppnameForOled(); 
-    oledText[1] = msg_no_services_found_entry_required;
+    oledText[1] = MSG_NO_SERVICES_FOUND_ENTRY_REQUIRED;
     oledText[3] = witServerIpAndPortConstructed;
     // oledText[5] = menu_select_wit_entry;
     setMenuTextForOled(menu_select_wit_entry);
@@ -802,7 +802,7 @@ void disconnectWitServer() {
   }
   dccexProtocol.disconnect();
   debug_println("Disconnected from wiThrottle server\n");
-  clearOledArray(); oledText[0] = msg_disconnected;
+  clearOledArray(); oledText[0] = MSG_DISCONNECTED;
   writeOledArray(false, false, true, true);
   dccexConnectionState = CONNECTION_STATE_DISCONNECTED;
   witServerIpAndPortChanged = true;
@@ -1964,7 +1964,7 @@ String getDisplayLocoString(int multiThrottleIndex, int index) {
   String locoNumber = String(loco->getAddress());
   if (index!=0) { // not the lead loco
     if (throttles[currentThrottleIndex]->getLocoAtPosition(index)->getFacing() == FacingReversed) {
-      locoNumber = locoNumber + direction_reverse_indicator;
+      locoNumber = locoNumber + DIRECTION_REVERSE_INDICATOR;
     }
   }
   return locoNumber;
@@ -2150,7 +2150,7 @@ void stopThenToggleDirection() {
 void reconnect() {
   clearOledArray(); 
   oledText[0] = appName; oledText[6] = appVersion; 
-  oledText[2] = msg_disconnected;
+  oledText[2] = MSG_DISCONNECTED;
   writeOledArray(false, false);
   delay(5000);
   disconnectWitServer();
@@ -2515,9 +2515,9 @@ void writeOledFunctionList(String soFar) {
       oledText[5] = "(" + String(functionPage) +  ") " + menu_text[menu_function_list];
       // setMenuTextForOled("(" + String(functionPage) +  ") " + menu_function_list);
     } else {
-      oledText[0] = msg_no_functions;
-      oledText[2] = msg_throttle_number + String(currentThrottleIndex+1);
-      oledText[3] = msg_no_loco_selected;
+      oledText[0] = MSG_NO_FUNCTIONS;
+      oledText[2] = MSG_THROTTLE_NUMBER + String(currentThrottleIndex+1);
+      oledText[3] = MSG_NO_LOCO_SELECTED;
       // oledText[5] = menu_cancel;
       setMenuTextForOled(menu_cancel);
     }
@@ -2538,7 +2538,7 @@ void writeOledEnterPassword() {
   } else {
     tempSsidPasswordEntered = " "+tempSsidPasswordEntered;
   }
-  oledText[0] = msg_enter_password;
+  oledText[0] = MSG_ENTER_PASSWORD;
   oledText[2] = tempSsidPasswordEntered;
   // oledText[5] = menu_enter_ssid_password;
   setMenuTextForOled(menu_enter_ssid_password);
@@ -2581,8 +2581,8 @@ void writeOledMenu(String soFar) {
       case MENU_ITEM_FUNCTION:
       case MENU_ITEM_TOGGLE_DIRECTION: {
           if (throttles[currentThrottleIndex]->getLocoCount() <= 0 ) {
-            oledText[2] = msg_throttle_number + String(currentThrottleIndex+1);
-            oledText[3] = msg_no_loco_selected;
+            oledText[2] = MSG_THROTTLE_NUMBER + String(currentThrottleIndex+1);
+            oledText[3] = MSG_NO_LOCO_SELECTED;
             // oledText[5] = menu_cancel;
             setMenuTextForOled(menu_cancel);
           } 
@@ -2650,9 +2650,9 @@ void writeHeartbeatCheck() {
   clearOledArray();
   oledText[0] = menuText[10][0];
   if (heartbeatCheckEnabled) {
-    oledText[1] = msg_heartbeatCheckEnabled; 
+    oledText[1] = MSG_HEARTBEAT_CHECK_ENABLED; 
   } else {
-    oledText[1] = msg_heartbeatCheckDisabled; 
+    oledText[1] = MSG_HEARTBEAT_CHECK_DISABLED; 
   }
   oledText[5] = menuText[10][1];
   writeOledArray(false, false);
@@ -2683,7 +2683,7 @@ void writeOledSpeed() {
     }
     // sSpeed = String(currentSpeed[currentThrottleIndex]);
     sSpeed = String(getDisplaySpeed(currentThrottleIndex));
-    sDirection = (currentDirection[currentThrottleIndex]==Forward) ? direction_forward : direction_reverse;
+    sDirection = (currentDirection[currentThrottleIndex]==Forward) ? DIRECTION_FORWARD_TEXT : DIRECTION_REVERSE_TEXT;
 
     //find the next Throttle that has any locos selected - if there is one
     if (maxThrottles > 1) {
@@ -2711,12 +2711,12 @@ void writeOledSpeed() {
         sNextThrottleSpeedAndDirection = String(speed);
         // if (speed>0) {
           if (currentDirection[nextThrottleIndex]==Forward) {
-            sNextThrottleSpeedAndDirection = sNextThrottleSpeedAndDirection + direction_forward_short;
+            sNextThrottleSpeedAndDirection = sNextThrottleSpeedAndDirection + DIRECTION_FORWARD_TEXT_SHORT;
           } else {
-            sNextThrottleSpeedAndDirection = direction_reverse_short + sNextThrottleSpeedAndDirection;
+            sNextThrottleSpeedAndDirection = DIRECTION_REVERSE_TEXT_SHORT + sNextThrottleSpeedAndDirection;
           }
         // }
-        // + " " + ((currentDirection[nextThrottleIndex]==Forward) ? direction_forward_short : direction_reverse_short);
+        // + " " + ((currentDirection[nextThrottleIndex]==Forward) ? DIRECTION_FORWARD_TEXT_SHORT : DIRECTION_REVERSE_TEXT_SHORT);
         sNextThrottleSpeedAndDirection = "     " + sNextThrottleSpeedAndDirection ;
         sNextThrottleSpeedAndDirection = sNextThrottleSpeedAndDirection.substring(sNextThrottleSpeedAndDirection.length()-5);
       }
@@ -2729,8 +2729,8 @@ void writeOledSpeed() {
 
   } else {
     setAppnameForOled();
-    oledText[2] = msg_throttle_number + String(currentThrottleIndex+1);
-    oledText[3] = msg_no_loco_selected;
+    oledText[2] = MSG_THROTTLE_NUMBER + String(currentThrottleIndex+1);
+    oledText[3] = MSG_NO_LOCO_SELECTED;
     drawTopLine = true;
   }
 
@@ -2912,7 +2912,7 @@ void writeOledDirectCommands() {
 
   oledDirectCommandsAreBeingDisplayed = true;
   clearOledArray();
-  oledText[0] = direct_command_list;
+  oledText[0] = DIRECT_COMMAND_LIST;
   for (int i=0; i < 4; i++) {
     oledText[i+1] = directCommandText[i][0];
   }
@@ -2957,10 +2957,10 @@ void deepSleepStart(bool autoShutdown) {
   setAppnameForOled();
   int delayPeriod = 2000;
   if (autoShutdown) {
-    oledText[2] = msg_auto_sleep;
+    oledText[2] = MSG_AUTO_SLEEP;
     delayPeriod = 10000;
   }
-  oledText[3] = msg_start_sleep;
+  oledText[3] = MSG_START_SLEEP;
   writeOledArray(false, false, true, true);
   delay(delayPeriod);
 

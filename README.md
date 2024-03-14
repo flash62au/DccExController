@@ -238,6 +238,9 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 
 ## Change Log
 
+### V0.14
+ - All menu text moved to defines that can be overridden in personal config_buttons_etc.h files
+
 ### V0.13
  - minor bug fix
 
