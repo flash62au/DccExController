@@ -241,9 +241,10 @@ int additionalButtonActions[MAX_ADDITIONAL_BUTTONS] = {
                           CHOSEN_ADDITIONAL_BUTTON_5_FUNCTION,
                           CHOSEN_ADDITIONAL_BUTTON_6_FUNCTION
 };
-unsigned long lastAdditionalButtonDebounceTime[MAX_ADDITIONAL_BUTTONS] = {0,0,0,0,0,0,0};  // the last time the output pin was toggled
+unsigned long lastAdditionalButtonDebounceTime[MAX_ADDITIONAL_BUTTONS];  // the last time the output pin was toggled
 unsigned long additionalButtonDebounceDelay = ADDITIONAL_BUTTON_DEBOUNCE_DELAY;    // the debounce time
-
+boolean additionalButtonRead[MAX_ADDITIONAL_BUTTONS];
+boolean additionalButtonLastRead[MAX_ADDITIONAL_BUTTONS];
 
 // *********************************************************************************
 
@@ -1036,16 +1037,17 @@ void keypadEvent(KeypadEvent key) {
 // *********************************************************************************
 
 void initialiseAdditionalButtons() {
-    for (int i = 0; i < MAX_ADDITIONAL_BUTTONS; i++) { 
-      if (additionalButtonActions[i] != FUNCTION_NULL) { 
-        debug_print("Additional Button: "); debug_print(i); debug_print(" pin:"); debug_println(additionalButtonPin[i]);
-        pinMode(additionalButtonPin[i], additionalButtonType[i]);
-        if (additionalButtonType[i] == INPUT_PULLUP) {
-          additionalButtonLastRead[i] = HIGH;
-        } else {
-          additionalButtonLastRead[i] = LOW;
-        }
+  for (int i = 0; i < MAX_ADDITIONAL_BUTTONS; i++) { 
+    if (additionalButtonActions[i] != FUNCTION_NULL) { 
+      debug_print("Additional Button: "); debug_print(i); debug_print(" pin:"); debug_println(additionalButtonPin[i]);
+      pinMode(additionalButtonPin[i], additionalButtonType[i]);
+      if (additionalButtonType[i] == INPUT_PULLUP) {
+        additionalButtonLastRead[i] = HIGH;
+      } else {
+        additionalButtonLastRead[i] = LOW;
       }
+    }
+    lastAdditionalButtonDebounceTime[i] = 0;
   }
 }
 
@@ -1100,7 +1102,7 @@ void setup() {
   u8g2.begin();
   // i2cSetClock(0,400000);
 
-  clearOledArray(); oledText[0] = appName; oledText[6] = appVersion; oledText[2] = msg_start;
+  clearOledArray(); oledText[0] = appName; oledText[6] = appVersion; oledText[2] = MSG_START;
   writeOledArray(false, false, true, true);
 
   delay(1000);
@@ -1114,8 +1116,8 @@ void setup() {
   rotaryEncoder.setAcceleration(100); //or set the value - larger number = more acceleration; 0 or 1 means disabled acceleration
 
   keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
-  keypad.setDebounceTime(keypadDebounceTime);
-  keypad.setHoldTime(keypadHoldTime);
+  keypad.setDebounceTime(KEYPAD_DEBOUNCE_TIME);
+  keypad.setHoldTime(KEYPAD_HOLD_TIME);
 
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_13,0); //1 = High, 0 = Low
 
