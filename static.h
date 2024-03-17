@@ -1,6 +1,6 @@
 const String appName = "DccExController";
-const String appVersion = "    Version 0.14";
-const String msg_start = "Start";
+const String appVersion = "    Version 0.15";
+
 
 #ifndef MENU_TEXT_MENU
    #define MENU_TEXT_MENU                      "* Menu                # Key Defs"
@@ -109,6 +109,9 @@ const int last_oled_screen_direct_commands =  9;
 
 // const String function_states = "fn ";
 
+#ifndef MSG_START
+  #define MSG_START                     "Start"
+#endif
 #ifndef MSG_BROWSING_FOR_SERVICE
   #define MSG_BROWSING_FOR_SERVICE      "Browsing for WiT services"
 #endif
@@ -185,13 +188,6 @@ const int last_oled_screen_direct_commands =  9;
 #ifndef MSG_HEARTBEAT_CHECK_DISABLED
    #define MSG_HEARTBEAT_CHECK_DISABLED "Heartbeat Check Disabled"
 #endif
-
-// const String label_locos = "Locos: ";
-// const String label_speed = "Speed: ";
-// const String label_track_power = "TRK";
-// const String label_unknown = "?";
-// const String label_on = "On" ;
-// const String label_off = "Off";
 
 const int glyph_heartbeat_off = 0x00b7;
 const int glyph_track_power = 0x00eb;
@@ -439,6 +435,9 @@ String witServerIpAndPortEntryMask = "###.###.###.###:#####";
 
 const char ssidPasswordBlankChar = 164;
 
+// *******************************************************************************************************************
+// fonts
+
 #define FONT_DEFAULT u8g2_font_NokiaSmallPlain_tf
 #define FONT_FUNCTION_INDICATORS u8g2_font_tiny_simon_tr
 #define FONT_THROTTLE_NUMBER u8g2_font_neuecraft_tr
@@ -455,6 +454,8 @@ const char ssidPasswordBlankChar = 164;
 #define CONSIST_LEAD_LOCO 0
 #define CONSIST_ALL_LOCOS 1
 
+// *******************************************************************************************************************
+
 #ifndef DCCEXCONTROLLER_DEBUG 
   #define DCCEXCONTROLLER_DEBUG    0
 #endif
@@ -463,6 +464,8 @@ const char ssidPasswordBlankChar = 164;
   #define DCCEXPROTOCOL_DEBUG   1
 #endif
 
+// *******************************************************************************************************************
+
 #ifndef AUTO_CONNECT_TO_FIRST_DEFINED_SERVER
   #define AUTO_CONNECT_TO_FIRST_DEFINED_SERVER false
 #endif
@@ -470,6 +473,8 @@ const char ssidPasswordBlankChar = 164;
 #ifndef AUTO_CONNECT_TO_FIRST_WITHROTTLE_SERVER
   #define AUTO_CONNECT_TO_FIRST_WITHROTTLE_SERVER true
 #endif
+
+// *******************************************************************************************************************
 
 #ifndef F0_LATCHING
   #define F0_LATCHING true
@@ -495,10 +500,59 @@ const char ssidPasswordBlankChar = 164;
   #define F2_LABEL "Horn"
 #endif
 
+// *******************************************************************************************************************
+
 #ifndef ROTARY_ENCODER_DEBOUNCE_TIME
   #define ROTARY_ENCODER_DEBOUNCE_TIME 200
 #endif
 
 #ifndef SEARCH_ROSTER_ON_ENTRY_OF_DCC_ADDRESS
   #define SEARCH_ROSTER_ON_ENTRY_OF_DCC_ADDRESS false
+#endif
+
+// *******************************************************************************************************************
+// consists follow functions
+#ifndef CONSIST_FUNCTION_FOLLOW_F0
+    #define CONSIST_FUNCTION_FOLLOW_F0                  CONSIST_ALL_LOCOS            // lights
+#endif
+#ifndef CONSIST_FUNCTION_FOLLOW_F1
+    #define CONSIST_FUNCTION_FOLLOW_F1                  CONSIST_LEAD_LOCO            // bell
+#endif
+#ifndef CONSIST_FUNCTION_FOLLOW_F2
+    #define CONSIST_FUNCTION_FOLLOW_F2                  CONSIST_LEAD_LOCO            // horn
+#endif
+#ifndef CONSIST_FUNCTION_FOLLOW_OTHER_FUNCTIONS
+    #define CONSIST_FUNCTION_FOLLOW_OTHER_FUNCTIONS     CONSIST_LEAD_LOCO
+#endif
+
+// *******************************************************************************************************************
+// other options
+#ifndef HASH_SHOWS_FUNCTIONS_INSTEAD_OF_KEY_DEFS
+    #define HASH_SHOWS_FUNCTIONS_INSTEAD_OF_KEY_DEFS false  // default if not defined in config_buttons.h
+#endif
+
+#ifndef MAX_THROTTLES
+    #define MAX_THROTTLES 2  // default if not defined in config_buttons.h
+#endif
+
+#ifndef ENCODER_BUTTON_ACTION
+    #define ENCODER_BUTTON_ACTION SPEED_STOP_THEN_TOGGLE_DIRECTION  // default if not defined in config_buttons.h
+#endif
+
+// *******************************************************************************************************************
+// OLED
+
+#ifdef U8X8_HAVE_HW_SPI
+    #include <SPI.h>                       // add to include path [Arduino install]\hardware\arduino\avr\libraries\SPI\src
+#endif
+#ifdef U8X8_HAVE_HW_I2C
+    #include <Wire.h>                      // add to include path [Arduino install]\hardware\arduino\avr\libraries\Wire\src
+#endif
+
+// U8g2 Constructor List (Frame Buffer)
+// you can overide this in config_buttons.h     DO NOT CHANGE IT HERE
+#ifndef OLED_TYPE
+    U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE, /* clock=*/ 22, /* data=*/ 23);
+#else
+    OLED_TYPE
 #endif

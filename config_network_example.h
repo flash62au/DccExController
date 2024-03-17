@@ -23,7 +23,7 @@ const String passwords[maxSsids] = {"password1", "password2", "password3", "pass
 // #define AUTO_CONNECT_TO_FIRST_DEFINED_SERVER true
 
 // Autoconnect to first found server (default, if not specified is true)
-#define AUTO_CONNECT_TO_FIRST_WITHROTTLE_SERVER true
+// #define AUTO_CONNECT_TO_FIRST_WITHROTTLE_SERVER true
 
 // ********************************************************************************************
 // uncomment and increase the #define line below if you need to override the default buffer size 
@@ -34,7 +34,7 @@ const String passwords[maxSsids] = {"password1", "password2", "password3", "pass
 // Roster selection
 // 
 // uncomment this line if you wish the DccEXcontroller to search the roster when to enter a dcc address
-// and use the roster entry if it finds it
-
+// and use the roster entry if it finds it.
 // #define SEARCH_ROSTER_ON_ENTRY_OF_DCC_ADDRESS true
 
+// *******************************************************************************************************************
