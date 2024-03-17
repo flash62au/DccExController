@@ -2,7 +2,7 @@
 
 A DccExController is a simple DIY, handheld controller that talks to a wThrottle Server (JMRI, DCC++EX and many others) using the Native DCC-EX protocol, exclusive to the EX-CommandStations, to control DC and DCC model trains. 
 
-[Discussion on Discord.](https://discord.gg/Tydr98un)
+[Discussion on Discord.](https://discord.gg/9DDjjpxzHB)
 
 [3d Printed Case](https://www.thingiverse.com/thing:5440351)
 
