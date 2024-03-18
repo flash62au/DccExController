@@ -636,8 +636,8 @@ void browseWitService() {
 
   noOfWitServices = 0;
   if ( (selectedSsid.substring(0,6) == "DCCEX_") && (selectedSsid.length()==12) ) {
-    debug_println(BYPASS_WIT_SERVER_SEARCH);
-    oledText[1] = BYPASS_WIT_SERVER_SEARCH;
+    debug_println(MSG_BYPASS_WIT_SERVER_SEARCH);
+    oledText[1] = MSG_BYPASS_WIT_SERVER_SEARCH;
     writeOledArray(false, false, true, true);
     delay(500);
   } else {

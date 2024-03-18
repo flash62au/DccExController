@@ -176,8 +176,8 @@ const int last_oled_screen_direct_commands =  9;
 #ifndef MSG_GUESSED_EX_CS_WIT_SERVER
    #define MSG_GUESSED_EX_CS_WIT_SERVER "'Guessed' EX-CS WiT server"
 #endif
-#ifndef BYPASS_WIT_SERVER_SEARCH
-   #define BYPASS_WIT_SERVER_SEARCH     "Bypass WiT server search"
+#ifndef MSG_BYPASS_WIT_SERVER_SEARCH
+   #define MSG_BYPASS_WIT_SERVER_SEARCH     "Bypass WiT server search"
 #endif
 #ifndef MSG_NO_FUNCTIONS
    #define MSG_NO_FUNCTIONS             "Function List - No Functions"
