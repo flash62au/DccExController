@@ -38,7 +38,7 @@
 // *********************************************************************************
 
 #ifndef MAX_BUFFER_SIZE
- #define MAX_BUFFER_ZIZE 500
+ #define MAX_BUFFER_SIZE 500
 #endif
 
 int keypadUseType = KEYPAD_USE_OPERATION;
