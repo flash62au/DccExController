@@ -93,6 +93,7 @@ Notes:
     * Click *Upload* 
 
 Notes: 
+   * DccExController version 0.16 or later requires DCCEXProtocol version 0.0.12 or later.
    * DccExController version 0.12 or later requires DCCEXProtocol version 0.0.10 or later.
    * DccExController version 0.02 or later requires DCCEXProtocol version 0.0.6 or later.
    * DccExController version 0.01 requires DCCEXProtocol version 0.0.3 or later.
@@ -237,6 +238,9 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 
 
 ## Change Log
+
+### V0.16
+ - Create fake heartbeat to help keep the connection alive 
 
 ### V0.15
  - button and display PIN configurations moved to defines that can be overridden in personal config_buttons_etc.h files

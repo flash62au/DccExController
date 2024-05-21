@@ -158,7 +158,8 @@ int currentThrottleIndex = 0;
 int maxThrottles = MAX_THROTTLES;
 
 int heartBeatPeriod = 10; // default to 10 seconds
-long lastServerResponseTime;  // seconds since start of Arduino
+long lastHeartBeatSentTime;
+long lastServerResponseTime;
 boolean heartbeatCheckEnabled = true;
 
 // used to stop speed bounces
@@ -872,6 +873,18 @@ void buildWitEntry() {
   }
 }
 
+void requestHeartbeat() {
+  // DCC-EX does not have a heartbeat, so this is fake request that forces a response from the CS
+  // debug_print("lastServerResponseTime "); debug_print(lastServerResponseTime);
+  // debug_print("  lastHeartBeatSentTime "); debug_println(lastHeartBeatSentTime);
+  // debug_print("  millis "); debug_println(millis() / 1000);
+
+  if (lastHeartBeatSentTime < ((millis()/1000)-heartBeatPeriod) ) {
+    lastHeartBeatSentTime = millis()/1000;
+    dccexProtocol.getNumberSupportedLocos();
+  }
+}
+
 // *********************************************************************************
 //   Rotary Encoder
 // *********************************************************************************
@@ -1153,10 +1166,13 @@ void loop() {
 
       setLastServerResponseTime(false);
 
-      if ( (lastServerResponseTime+(heartBeatPeriod*4) < millis()/1000) 
-      && (heartbeatCheckEnabled) ) {
-        debug_print("Disconnected - Last:");  debug_print(lastServerResponseTime); debug_print(" Current:");  debug_println(millis()/1000);
-        reconnect();
+      if (heartbeatCheckEnabled) {
+        if (lastServerResponseTime+(heartBeatPeriod*4) < millis()/1000) {
+          debug_print("Disconnected - Last:");  debug_print(lastServerResponseTime); debug_print(" Current:");  debug_println(millis()/1000);
+          reconnect();
+        } else if (lastServerResponseTime+(heartBeatPeriod) < millis()/1000) {
+          requestHeartbeat();
+        }
       }
     }
   }
@@ -2160,8 +2176,14 @@ void reconnect() {
 
 void setLastServerResponseTime(boolean force) {
   // debug_print("setLastServerResponseTime "); debug_println((force) ? "True": "False");
-  lastServerResponseTime = dccexProtocol.getLastServerResponseTime();
-  if ( (lastServerResponseTime==0) || (force) ) lastServerResponseTime = millis() /1000;
+  // debug_print("lastServerResponseTime "); debug_print(lastServerResponseTime);
+  // debug_print("  millis "); debug_println(millis() / 1000);
+
+  lastServerResponseTime = dccexProtocol.getLastServerResponseTime() / 1000;
+  if ( (lastServerResponseTime==0) || (force) ) {
+    lastServerResponseTime = millis() /1000;
+    lastHeartBeatSentTime = millis() /1000;
+  }
   // debug_print("setLastServerResponseTime "); debug_println(lastServerResponseTime);
 }
 
