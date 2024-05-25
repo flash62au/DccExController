@@ -609,7 +609,7 @@ void connectSsid() {
 }
 
 // *********************************************************************************
-// WiThrottle 
+// DCC-EX/WiThrottle server / service
 // *********************************************************************************
 
 void witServiceLoop() {
@@ -916,20 +916,7 @@ void rotary_onButtonClick() {
       }
       rotaryEncoderButtonLastTimePressed = millis();
       // debug_println("encoder button pressed");
-
-      // if (encoderButtonAction == SPEED_STOP_THEN_TOGGLE_DIRECTION) {
-      //   if (throttles[currentThrottleIndex]->getLocoCount()>0) {
-      //     if (currentSpeed[currentThrottleIndex] != 0) {
-      //       // dccexProtocol.setSpeed(currentThrottleIndexChar, 0);
-      //       speedSet(currentThrottleIndex,0);
-      //     } else {
-      //       if (toggleDirectionOnEncoderButtonPressWhenStationary) toggleDirection(currentThrottleIndex);
-      //     }
-      //     currentSpeed[currentThrottleIndex] = 0;
-      //   }
-      // } else {
-        doDirectAction(encoderButtonAction);
-      // }
+      doDirectAction(encoderButtonAction);
       writeOledSpeed();
     }  else {
       deepSleepStart();
@@ -1690,12 +1677,14 @@ void doMenu() {
             throttles[currentThrottleIndex]->addLoco(loco1,FacingForward);
             debug_print("Add Loco: LocoNotInRoster ");
             debug_println(throttles[currentThrottleIndex]->getLocoCount());
+            dccexProtocol.requestLocoUpdate(throttles[currentThrottleIndex]->getFirst()->getLoco()->getAddress());
             resetFunctionStates(currentThrottleIndex);
             loadDefaultFunctionLabels(currentThrottleIndex);  
           } else {
             throttles[currentThrottleIndex]->addLoco(loco1,FacingForward);
             debug_print("Add loco: LocoInRoster ");
             debug_println(throttles[currentThrottleIndex]->getLocoCount());
+            dccexProtocol.requestLocoUpdate(throttles[currentThrottleIndex]->getFirst()->getLoco()->getAddress());
             resetFunctionStates(currentThrottleIndex);
             loadFunctionLabels(currentThrottleIndex);
           }
