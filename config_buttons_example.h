@@ -203,3 +203,11 @@
 
 // #define KEYPAD_DEBOUNCE_TIME 10
 // #define KEYPAD_HOLD_TIME 200
+
+// *******************************************************************************************************************
+// Battery Test
+// To use a battery test
+//
+// #define USE_BATTERY_TEST true
+// #define USE_BATTERY_TEST_PIN 34
+// #define USE_BATTERY_PERCENT_AS_WELL_AS_ICON false

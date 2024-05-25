@@ -15,6 +15,7 @@
 #include <U8g2lib.h>              // https://github.com/olikraus/u8g2  (Just get "U8g2" via the Arduino IDE Library Manager)   new-bsd
 #include <string>
 
+#include "Pangodream_18650_CL.h"
 #include "config_network.h"      // LAN networks (SSIDs and passwords)
 #include "config_buttons.h"      // keypad buttons assignments
 #include "config_keypad_etc.h"   // hardware config - GPIOs - keypad, encoder; oled display type
@@ -63,6 +64,14 @@ TrackPower trackPower = PowerUnknown;
 bool circleValues = true;
 int encoderValue = 0;
 int lastEncoderValue = 0;
+
+// battery test values
+bool useBatteryTest = USE_BATTERY_TEST;
+int batteryTestPin = BATTERY_TEST_PIN;
+bool useBatteryPercentAsWellAsIcon = USE_BATTERY_PERCENT_AS_WELL_AS_ICON;
+int lastBatteryTestValue = 0; 
+double lastBatteryCheckTime = 0;
+Pangodream_18650_CL BL(BATTERY_TEST_PIN);
 
 // server variables
 // boolean ssidConnected = false;
@@ -251,9 +260,9 @@ boolean additionalButtonLastRead[MAX_ADDITIONAL_BUTTONS];
 
 void displayUpdateFromWit(int multiThrottleIndex) {
   debug_print("displayUpdateFromWit(): keyapdeUseType "); debug_print(keypadUseType); 
-  debug_print(" menuIsShowing "); debug_print(menuIsShowing);
-  debug_print(" multiThrottleIndex "); debug_print(multiThrottleIndex);
-  debug_println("");
+  // debug_print(" menuIsShowing "); debug_print(menuIsShowing);
+  // debug_print(" multiThrottleIndex "); debug_print(multiThrottleIndex);
+  // debug_println("");
   if ( (keypadUseType==KEYPAD_USE_OPERATION) && (!menuIsShowing) 
   && (multiThrottleIndex==currentThrottleIndex) ) {
     writeOledSpeed();
@@ -461,13 +470,13 @@ void enterSsidPassword() {
   keypadUseType = KEYPAD_USE_ENTER_SSID_PASSWORD;
   encoderUseType = ENCODER_USE_SSID_PASSWORD;
   if (ssidPasswordChanged) { // don't refresh the screen if nothing nothing has changed
-    debug_println("enterSsidPassword()");
+    // debug_println("enterSsidPassword()");
     writeOledEnterPassword();
     ssidPasswordChanged = false;
   }
 }
 void showListOfSsids() {  // show the list from the specified values in config_network.h
-  debug_println("showListOfSsids()");
+  // debug_println("showListOfSsids()");
   startWaitForSelection = millis();
 
   clearOledArray(); 
@@ -477,14 +486,14 @@ void showListOfSsids() {  // show the list from the specified values in config_n
   if (maxSsids == 0) {
     oledText[1] = MSG_NO_SSIDS_FOUND;
     writeOledArray(false, false, true, true);
-    debug_println(oledText[1]);
+    // debug_println(oledText[1]);
   
   } else {
     debug_print(maxSsids);  debug_println(MSG_SSIDS_LISTED);
     clearOledArray(); oledText[10] = MSG_SSIDS_LISTED;
 
     for (int i = 0; i < maxSsids; ++i) {
-      debug_print(i+1); debug_print(": "); debug_println(ssids[i]);
+      // debug_print(i+1); debug_print(": "); debug_println(ssids[i]);
       int j = i;
       if (i>=5) { 
         j=i+1;
@@ -517,7 +526,7 @@ void showListOfSsids() {  // show the list from the specified values in config_n
 }
 
 void selectSsid(int selection) {
-  debug_print("selectSsid() "); debug_println(selection);
+  // debug_print("selectSsid() "); debug_println(selection);
 
   if ((selection>=0) && (selection < maxSsids)) {
     ssidConnectionState = CONNECTION_STATE_SELECTED;
@@ -527,7 +536,7 @@ void selectSsid(int selection) {
 }
 
 void connectSsid() {
-  debug_println("Connecting to ssid...");
+  // debug_println("Connecting to ssid...");
   clearOledArray(); 
   setAppnameForOled();
   oledText[1] = selectedSsid; oledText[2] + "connecting...";
@@ -540,7 +549,7 @@ void connectSsid() {
   const char *cPassword = selectedSsidPassword.c_str();
 
   if (selectedSsid.length()>0) {
-    debug_print("Trying Network "); debug_println(cSsid);
+    // debug_print("Trying Network "); debug_println(cSsid);
     clearOledArray(); 
     setAppnameForOled(); 
     for (int i = 0; i < 3; ++i) {  // Try three times
@@ -550,7 +559,7 @@ void connectSsid() {
       nowTime = startTime;      
       WiFi.begin(cSsid, cPassword); 
 
-      debug_print("Trying Network ... Checking status "); debug_print(cSsid); debug_print(" :"); debug_print(cPassword); debug_println(":");
+      // debug_print("Trying Network ... Checking status "); debug_print(cSsid); debug_print(" :"); debug_print(cPassword); debug_println(":");
       while ( (WiFi.status() != WL_CONNECTED) 
         && ((nowTime-startTime) <= SSID_CONNECTION_TIMEOUT) ) { // wait for X seconds to see if the connection worked
         delay(250);
@@ -567,7 +576,7 @@ void connectSsid() {
 
     debug_println("");
     if (WiFi.status() == WL_CONNECTED) {
-      debug_print("Connected. IP address: "); debug_println(WiFi.localIP());
+      // debug_print("Connected. IP address: "); debug_println(WiFi.localIP());
       oledText[2] = MSG_CONNECTED; 
       oledText[3] = MSG_ADDRESS_LABEL + String(WiFi.localIP());
       writeOledArray(false, false, true, true);
@@ -577,13 +586,13 @@ void connectSsid() {
 
       // setup the bonjour listener
       if (!MDNS.begin("WiTcontroller")) {
-        debug_println("Error setting up MDNS responder!");
+        // debug_println("Error setting up MDNS responder!");
         oledText[2] = MSG_BOUNJOUR_SETUP_FAILED;
         writeOledArray(false, false, true, true);
         delay(2000);
         ssidConnectionState = CONNECTION_STATE_DISCONNECTED;
       } else {
-        debug_println("MDNS responder started");
+        // debug_println("MDNS responder started");
       }
 
     } else {
@@ -619,7 +628,7 @@ void witServiceLoop() {
 }
 
 void browseWitService() {
-  debug_println("browseWitService()");
+  // debug_println("browseWitService()");
 
   keypadUseType = KEYPAD_USE_SELECT_WITHROTTLE_SERVER;
 
@@ -629,7 +638,7 @@ void browseWitService() {
   const char * service = "withrottle";
   const char * proto= "tcp";
 
-  debug_printf("Browsing for service _%s._%s.local. on %s ... ", service, proto, selectedSsid.c_str());
+  // debug_printf("Browsing for service _%s._%s.local. on %s ... ", service, proto, selectedSsid.c_str());
   clearOledArray(); 
   oledText[0] = appName; oledText[6] = appVersion; 
   oledText[1] = selectedSsid;   oledText[2] = MSG_BROWSING_FOR_SERVICE;
@@ -637,7 +646,7 @@ void browseWitService() {
 
   noOfWitServices = 0;
   if ( (selectedSsid.substring(0,6) == "DCCEX_") && (selectedSsid.length()==12) ) {
-    debug_println(MSG_BYPASS_WIT_SERVER_SEARCH);
+    // debug_println(MSG_BYPASS_WIT_SERVER_SEARCH);
     oledText[1] = MSG_BYPASS_WIT_SERVER_SEARCH;
     writeOledArray(false, false, true, true);
     delay(500);
@@ -683,19 +692,19 @@ void browseWitService() {
   if (foundWitServersCount == 0) {
     oledText[1] = MSG_NO_SERVICES_FOUND;
     writeOledArray(false, false, true, true);
-    debug_println(oledText[1]);
+    // debug_println(oledText[1]);
     delay(1000);
     buildWitEntry();
     dccexConnectionState = CONNECTION_STATE_ENTRY_REQUIRED;
   
   } else {
-    debug_print(noOfWitServices);  debug_println(MSG_SERVICES_FOUND);
+    // debug_print(noOfWitServices);  debug_println(MSG_SERVICES_FOUND);
     clearOledArray(); oledText[1] = MSG_SERVICES_FOUND;
 
     for (int i = 0; i < foundWitServersCount; ++i) {
       // Print details for each service found
-      debug_print("  "); debug_print(i); debug_print(": '"); debug_print(foundWitServersNames[i]);
-      debug_print("' ("); debug_print(foundWitServersIPs[i]); debug_print(":"); debug_print(foundWitServersPorts[i]); debug_println(")");
+      // debug_print("  "); debug_print(i); debug_print(": '"); debug_print(foundWitServersNames[i]);
+      // debug_print("' ("); debug_print(foundWitServersIPs[i]); debug_print(":"); debug_print(foundWitServersPorts[i]); debug_println(")");
       if (i<5) {  // only have room for 5
         String truncatedIp = ".." + foundWitServersIPs[i].toString().substring(foundWitServersIPs[i].toString().lastIndexOf("."));
         oledText[i] = String(i) + ": " + truncatedIp + ":" + String(foundWitServersPorts[i]) + " " + foundWitServersNames[i];
@@ -709,20 +718,20 @@ void browseWitService() {
     writeOledArray(false, false);
 
     if ( (foundWitServersCount == 1) && (autoConnectToFirstWiThrottleServer) ) {
-      debug_println("WiT Selection - only 1");
+      // debug_println("WiT Selection - only 1");
       selectedWitServerIP = foundWitServersIPs[0];
       selectedWitServerPort = foundWitServersPorts[0];
       selectedWitServerName = foundWitServersNames[0];
       dccexConnectionState = CONNECTION_STATE_SELECTED;
     } else {
-      debug_println("WiT Selection required");
+      // debug_println("WiT Selection required");
       dccexConnectionState = CONNECTION_STATE_SELECTION_REQUIRED;
     }
   }
 }
 
 void selectWitServer(int selection) {
-  debug_print("selectWitServer() "); debug_println(selection);
+  // debug_print("selectWitServer() "); debug_println(selection);
 
   if ((selection>=0) && (selection < foundWitServersCount)) {
     dccexConnectionState = CONNECTION_STATE_SELECTED;
@@ -813,8 +822,8 @@ void disconnectWitServer() {
 void witEntryAddChar(char key) {
   if (witServerIpAndPortEntered.length() < 17) {
     witServerIpAndPortEntered = witServerIpAndPortEntered + key;
-    debug_print("wit entered: ");
-    debug_println(witServerIpAndPortEntered);
+    // debug_print("wit entered: ");
+    // debug_println(witServerIpAndPortEntered);
     buildWitEntry();
     witServerIpAndPortChanged = true;
   }
@@ -823,8 +832,8 @@ void witEntryAddChar(char key) {
 void witEntryDeleteChar(char key) {
   if (witServerIpAndPortEntered.length() > 0) {
     witServerIpAndPortEntered = witServerIpAndPortEntered.substring(0, witServerIpAndPortEntered.length()-1);
-    debug_print("wit deleted: ");
-    debug_println(witServerIpAndPortEntered);
+    // debug_print("wit deleted: ");
+    // debug_println(witServerIpAndPortEntered);
     buildWitEntry();
     witServerIpAndPortChanged = true;
   }
@@ -832,8 +841,8 @@ void witEntryDeleteChar(char key) {
 
 void ssidPasswordAddChar(char key) {
   ssidPasswordEntered = ssidPasswordEntered + key;
-  debug_print("password entered: ");
-  debug_println(ssidPasswordEntered);
+  // debug_print("password entered: ");
+  // debug_println(ssidPasswordEntered);
   ssidPasswordChanged = true;
   ssidPasswordCurrentChar = ssidPasswordBlankChar;
 }
@@ -841,8 +850,8 @@ void ssidPasswordAddChar(char key) {
 void ssidPasswordDeleteChar(char key) {
   if (ssidPasswordEntered.length() > 0) {
     ssidPasswordEntered = ssidPasswordEntered.substring(0, ssidPasswordEntered.length()-1);
-    debug_print("password char deleted: ");
-    debug_println(ssidPasswordEntered);
+    // debug_print("password char deleted: ");
+    // debug_println(ssidPasswordEntered);
     ssidPasswordChanged = true;
     ssidPasswordCurrentChar = ssidPasswordBlankChar;
   }
@@ -902,11 +911,12 @@ void rotary_onButtonClick() {
         && (keypadUseType!=KEYPAD_USE_SELECT_SSID_FROM_FOUND) ) {
       
       if ( (millis() - rotaryEncoderButtonLastTimePressed) < rotaryEncoderButtonEncoderDebounceTime) {   //ignore multiple press in that specified time
-        debug_println("encoder button debounce");
+        // debug_println("encoder button debounce");
         return;
       }
       rotaryEncoderButtonLastTimePressed = millis();
-      debug_println("encoder button pressed");
+      // debug_println("encoder button pressed");
+
       // if (encoderButtonAction == SPEED_STOP_THEN_TOGGLE_DIRECTION) {
       //   if (throttles[currentThrottleIndex]->getLocoCount()>0) {
       //     if (currentSpeed[currentThrottleIndex] != 0) {
@@ -937,10 +947,10 @@ void rotary_loop() {
   if (rotaryEncoder.encoderChanged()) {   //don't print anything unless value changed
 
     encoderValue = rotaryEncoder.readEncoder();
-    debug_print("Encoder From: "); debug_print(lastEncoderValue);  debug_print(" to: "); debug_println(encoderValue);
+    // debug_print("Encoder From: "); debug_print(lastEncoderValue);  debug_print(" to: "); debug_println(encoderValue);
 
     if ( (millis() - rotaryEncoderButtonLastTimePressed) < rotaryEncoderButtonEncoderDebounceTime) {   //ignore the encoder change if the button was pressed recently
-      debug_println("encoder button debounce - in Rotary_loop()");
+      // debug_println("encoder button debounce - in Rotary_loop()");
       return;
     // } else {
     //   debug_print("encoder button debounce - time since last press: ");
@@ -953,7 +963,7 @@ void rotary_loop() {
       } else {
         lastEncoderValue = 0; 
       }
-      debug_print("Corrected Encoder From: "); debug_print(lastEncoderValue); debug_print(" to: "); debug_println(encoderValue);
+      // debug_print("Corrected Encoder From: "); debug_print(lastEncoderValue); debug_print(" to: "); debug_println(encoderValue);
     }
  
     if (encoderUseType == ENCODER_USE_OPERATION) {
@@ -1015,6 +1025,29 @@ void encoderSpeedChange(boolean rotationIsClockwise, int speedChange) {
       speedDown(currentThrottleIndex, speedChange);
     } else {
       speedUp(currentThrottleIndex, speedChange);
+    }
+  }
+}
+
+// *********************************************************************************
+//   Battery Test
+// *********************************************************************************
+
+void batteryTest_loop() {
+  // Read the battery pin
+
+  if(millis()-lastBatteryCheckTime>10000) {
+    lastBatteryCheckTime = millis();
+    // debug_print("battery pin Value: "); debug_println(analogRead(batteryTestPin));  //Reads the analog value on the throttle pin.
+    int batteryTestValue = BL.getBatteryChargeLevel();
+    
+    // debug_print("batteryTestValue: "); debug_println(batteryTestValue); 
+
+    if (batteryTestValue!=lastBatteryTestValue) { 
+      lastBatteryTestValue = BL.getBatteryChargeLevel();
+      if ( (keypadUseType==KEYPAD_USE_OPERATION) && (!menuIsShowing)) {
+        writeOledSpeed();
+      }
     }
   }
 }
@@ -1181,6 +1214,8 @@ void loop() {
   rotary_loop();
 
   additionalButtonLoop(); 
+  
+  if (useBatteryTest) { batteryTest_loop(); }
 
 	// debug_println("loop:" );
 }
@@ -1491,10 +1526,10 @@ void doKeyPress(char key, boolean pressed) {
   } else {  // released
     if (keypadUseType == KEYPAD_USE_OPERATION) {
       if ( (!menuCommandStarted) && (key>='0') && (key<='D')) { // only process releases for the numeric keys + A,B,C,D and only if a menu command has not be started
-        debug_println("Operation - Process key release");
+        // debug_println("Operation - Process key release");
         doDirectCommand(key, false);
       } else {
-        debug_println("Non-Operation - Process key release");
+        // debug_println("Non-Operation - Process key release");
       }
     }
   }
@@ -2775,6 +2810,26 @@ void writeOledSpeed() {
     u8g2.setDrawColor(1);
     u8g2.setFont(FONT_THROTTLE_NUMBER); // medium
     u8g2.drawStr(2,15, String(currentThrottleIndex+1).c_str());
+  }
+  
+  if (useBatteryTest) {
+    // int lastBatteryTestValue = random(0,100);
+    u8g2.setFont(FONT_HEARTBEAT);
+    u8g2.setDrawColor(1);
+    u8g2.drawStr(1, 30, String("Z").c_str());
+    if (lastBatteryTestValue>10) u8g2.drawLine(2, 24, 2, 27);
+    if (lastBatteryTestValue>25) u8g2.drawLine(3, 24, 3, 27);
+    if (lastBatteryTestValue>50) u8g2.drawLine(4, 24, 4, 27);
+    if (lastBatteryTestValue>75) u8g2.drawLine(5, 24, 5, 27);
+    if (lastBatteryTestValue>90) u8g2.drawLine(6, 24, 6, 27);
+    
+    u8g2.setFont(FONT_FUNCTION_INDICATORS);
+    if (useBatteryPercentAsWellAsIcon) {
+      u8g2.drawStr(1,22, String(String(lastBatteryTestValue)+"%").c_str());
+    }
+    if(lastBatteryTestValue<4) {
+      u8g2.drawStr(11,29, String("LOW").c_str());
+    }
   }
 
   if (speedStep != currentSpeedStep[currentThrottleIndex]) {

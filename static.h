@@ -1,5 +1,5 @@
 const String appName = "DccExController";
-const String appVersion = "    Version 0.16";
+const String appVersion = "              v0.17";
 
 
 #ifndef MENU_TEXT_MENU
@@ -555,4 +555,14 @@ const char ssidPasswordBlankChar = 164;
     U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE, /* clock=*/ 22, /* data=*/ 23);
 #else
     OLED_TYPE
+#endif
+
+#ifndef USE_BATTERY_TEST
+   #define USE_BATTERY_TEST false
+#endif
+#ifndef BATTERY_TEST_PIN
+   #define BATTERY_TEST_PIN 34
+#endif
+#ifndef USE_BATTERY_PERCENT_AS_WELL_AS_ICON
+   #define USE_BATTERY_PERCENT_AS_WELL_AS_ICON false
 #endif

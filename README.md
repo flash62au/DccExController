@@ -239,6 +239,10 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 
 ## Change Log
 
+### V0.17
+ - support for optionally using a voltage divider to show the battery charge level
+ - remove some of the debug messages 
+
 ### V0.16
  - Create fake heartbeat to help keep the connection alive 
 
