@@ -1,5 +1,5 @@
 const String appName = "DccExController";
-const String appVersion = "              v0.17";
+const String appVersion = "              v0.18";
 
 
 #ifndef MENU_TEXT_MENU
@@ -161,6 +161,9 @@ const int last_oled_screen_direct_commands =  9;
 #ifndef MSG_AUTO_SLEEP
    #define MSG_AUTO_SLEEP               "Waited too long for Select"
 #endif
+#ifndef MSG_BATTERY_SLEEP
+   #define MSG_BATTERY_SLEEP            "Battery critically low"
+#endif
 #ifndef MSG_START_SLEEP
    #define MSG_START_SLEEP              "Shutting Down.        E.btn ON"
 #endif
@@ -194,6 +197,10 @@ const int glyph_track_power = 0x00eb;
 const int glyph_speed_step = 0x00d6;
 // const int glyph_direction_forward = 0x0070;
 // const int glyph_direction_reverse = 0x006d;
+
+#define SLEEP_REASON_COMMAND 0
+#define SLEEP_REASON_INACTIVITY 1
+#define SLEEP_REASON_BATTERY 2
 
 #define KEYPAD_USE_OPERATION 0
 #define KEYPAD_USE_SELECT_SSID 1
@@ -565,4 +572,7 @@ const char ssidPasswordBlankChar = 164;
 #endif
 #ifndef USE_BATTERY_PERCENT_AS_WELL_AS_ICON
    #define USE_BATTERY_PERCENT_AS_WELL_AS_ICON false
+#endif
+#ifndef USE_BATTERY_SLEEP_AT_PERCENT
+   #define USE_BATTERY_SLEEP_AT_PERCENT 3
 #endif
