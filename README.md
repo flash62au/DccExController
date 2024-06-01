@@ -240,6 +240,9 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 ## Change Log
 
 ### V0.18
+- minor format change 
+
+### V0.18
 - added auto deep sleep on low battery 
 
 ### V0.17
