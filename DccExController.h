@@ -191,8 +191,8 @@ void writeOledDirectCommands(void);
 
 void debugLocoSpeed(String txt, Loco* loco);
 
-void deepSleepStart(void);
-void deepSleepStart(bool);
+void deepSleepStart();
+void deepSleepStart(int);
 
 char getMultiThrottleChar(int);
 int getMultiThrottleIndex(char);
