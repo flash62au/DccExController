@@ -15,12 +15,13 @@
 #include <U8g2lib.h>              // https://github.com/olikraus/u8g2  (Just get "U8g2" via the Arduino IDE Library Manager)   new-bsd
 #include <string>
 
-#include "Pangodream_18650_CL.h"
-#include "config_network.h"      // LAN networks (SSIDs and passwords)
-#include "config_buttons.h"      // keypad buttons assignments
-#include "config_keypad_etc.h"   // hardware config - GPIOs - keypad, encoder; oled display type
+#include "Pangodream_18650_CL.h"  // https://github.com/pangodream/18650CL  
 
-#include "static.h"              // change for non-english languages
+#include "config_network.h"       // LAN networks (SSIDs and passwords)
+#include "config_buttons.h"       // keypad buttons assignments
+#include "config_keypad_etc.h"    // hardware config - GPIOs - keypad, encoder; oled display type
+
+#include "static.h"
 #include "actions.h"
 
 #include "DccExController.h"
@@ -189,8 +190,9 @@ const boolean encoderRotationClockwiseIsIncreaseSpeed = ENCODER_ROTATION_CLOCKWI
 const boolean toggleDirectionOnEncoderButtonPressWhenStationary = TOGGLE_DIRECTION_ON_ENCODER_BUTTON_PRESSED_WHEN_STATIONAY;
 // true = if the locos(s) are stationary, clicking the encoder button will toggle the direction
 
-//4x3 keypad
-int buttonActions[10] = { CHOSEN_KEYPAD_0_FUNCTION,
+//4x3 keypad only uses 0-9
+//4x4 uses all 14 
+int buttonActions[14] = { CHOSEN_KEYPAD_0_FUNCTION,
                           CHOSEN_KEYPAD_1_FUNCTION,
                           CHOSEN_KEYPAD_2_FUNCTION,
                           CHOSEN_KEYPAD_3_FUNCTION,
@@ -199,7 +201,11 @@ int buttonActions[10] = { CHOSEN_KEYPAD_0_FUNCTION,
                           CHOSEN_KEYPAD_6_FUNCTION,
                           CHOSEN_KEYPAD_7_FUNCTION,
                           CHOSEN_KEYPAD_8_FUNCTION,
-                          CHOSEN_KEYPAD_9_FUNCTION
+                          CHOSEN_KEYPAD_9_FUNCTION,
+                          CHOSEN_KEYPAD_A_FUNCTION,
+                          CHOSEN_KEYPAD_B_FUNCTION,
+                          CHOSEN_KEYPAD_C_FUNCTION,
+                          CHOSEN_KEYPAD_D_FUNCTION
 };
 
 // text that will appear when you press #
@@ -255,6 +261,15 @@ unsigned long lastAdditionalButtonDebounceTime[MAX_ADDITIONAL_BUTTONS];  // the 
 unsigned long additionalButtonDebounceDelay = ADDITIONAL_BUTTON_DEBOUNCE_DELAY;    // the debounce time
 boolean additionalButtonRead[MAX_ADDITIONAL_BUTTONS];
 boolean additionalButtonLastRead[MAX_ADDITIONAL_BUTTONS];
+
+char *customCommand1 = (char*) CUSTOM_COMMAND_1;
+char *customCommand2 = (char*) CUSTOM_COMMAND_2;
+char *customCommand3 = (char*) CUSTOM_COMMAND_3;
+char *customCommand4 = (char*) CUSTOM_COMMAND_4;
+char *customCommand5 = (char*) CUSTOM_COMMAND_5;
+char *customCommand6 = (char*) CUSTOM_COMMAND_6;
+char *customCommand7 = (char*) CUSTOM_COMMAND_7;
+
 
 // *********************************************************************************
 
@@ -667,7 +682,8 @@ void browseWitService() {
   if (noOfWitServices > 0) {
     for (int i = 0; ((i < noOfWitServices) && (i<maxFoundWitServers)); ++i) {
       foundWitServersNames[i] = MDNS.hostname(i);
-      foundWitServersIPs[i] = MDNS.IP(i);
+      // foundWitServersIPs[i] = MDNS.IP(i);
+      foundWitServersIPs[i] = ESPMDNS_IP_ATTRIBUTE_NAME;
       foundWitServersPorts[i] = MDNS.port(i);
       // debug_print("txt 0: key: "); debug_print(MDNS.txtKey(i,0)); debug_print(" value: '"); debug_print(MDNS.txt(i,0)); debug_println("'");
       // debug_print("txt 1: key: "); debug_print(MDNS.txtKey(i,1)); debug_print(" value: '"); debug_print(MDNS.txt(i,1)); debug_println("'");
@@ -1531,7 +1547,12 @@ void doKeyPress(char key, boolean pressed) {
 
 void doDirectCommand (char key, boolean pressed) {
   debug_print("doDirectCommand(): key: "); debug_print(key);  debug_print(" pressed: "); debug_println(pressed); 
-  int buttonAction = buttonActions[(key - '0')];
+  int buttonAction = 0 ;
+  if (key<=57) {
+    buttonAction = buttonActions[(key - '0')];
+  } else {
+    buttonAction = buttonActions[(key - 55)]; // A, B, C, D
+  }
   if (buttonAction!=FUNCTION_NULL) {
     if ( (buttonAction>=FUNCTION_0) && (buttonAction<=FUNCTION_31) ) {
       doDirectCommandFunction(currentThrottleIndex, buttonAction, pressed);
@@ -1577,7 +1598,7 @@ void doDirectCommandFunction(int currentThrottleIndex, int buttonAction, boolean
 }
 
 void doDirectAction(int buttonAction) {
-  debug_println("doDirectAction(): ");
+  debug_print("doDirectAction(): ");  debug_println(buttonAction);
   switch (buttonAction) {
       case DIRECTION_FORWARD: {
         changeDirection(currentThrottleIndex, Forward);
@@ -1651,7 +1672,40 @@ void doDirectAction(int buttonAction) {
         changeNumberOfThrottles(false);
         break; 
       }
-  }
+
+      case CUSTOM_1: {
+        debug_println("doDirectAction(): CUSTOM_1");
+        dccexProtocol.sendCommand(customCommand1);
+        break; 
+      }
+      case CUSTOM_2: {
+        debug_println("doDirectAction(): CUSTOM_2");
+        dccexProtocol.sendCommand(customCommand2);
+        break; 
+      }
+      case CUSTOM_3: {
+        debug_println("doDirectAction(): CUSTOM_3");
+        dccexProtocol.sendCommand(customCommand3);
+        break; 
+      }
+      case CUSTOM_4: {
+        debug_println("doDirectAction(): CUSTOM_4");
+        dccexProtocol.sendCommand(customCommand4);
+        break; 
+      }
+      case CUSTOM_5: {
+        dccexProtocol.sendCommand(customCommand5);
+        break; 
+      }
+      case CUSTOM_6: {
+        dccexProtocol.sendCommand(customCommand6);
+        break; 
+      }
+      case CUSTOM_7: {
+        dccexProtocol.sendCommand(customCommand7);
+        break; 
+      }
+    }
   // debug_println("doDirectAction(): end");
 }
 

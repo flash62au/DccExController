@@ -50,6 +50,9 @@ Notes:
 
 ## Loading the code
 
+**WARNING!**
+The latest versions of the ESP32 Board Library (3.0.0 and later) have renamed an attribute in ESPmDNS. The code has been modified to reflect this.  If you are using an earlier version then you need to include the define ``#define USING_OLDER_ESPMDNS true``
+
 1. Download the Arduino IDE.  
     * Available from  https://support.arduino.cc/hc/en-us/articles/360019833020-Download-and-install-Arduino-IDE
 2. Download the esp32 boards in the Arduino IDE.
@@ -93,6 +96,7 @@ Notes:
     * Click *Upload* 
 
 Notes: 
+   * DccExController version 0.20 or later requires DCCEXProtocol version 0.0.16 or later.
    * DccExController version 0.16 or later requires DCCEXProtocol version 0.0.12 or later.
    * DccExController version 0.12 or later requires DCCEXProtocol version 0.0.10 or later.
    * DccExController version 0.02 or later requires DCCEXProtocol version 0.0.6 or later.
@@ -283,7 +287,12 @@ Recommend adding a physical power switch as this will continually drain the batt
 
 ## Change Log
 
-### V0.18
+### V0.20
+- support for 4x4 keypad
+- support for custom commands
+- workaround for the latest versions of the ESP32 Board Library (3.0.0 and later) have renamed an attribute. 
+
+### V0.18 and V0.19
 - minor format change 
 
 ### V0.18

@@ -1,4 +1,13 @@
 // ********************************************************************************************
+//  ESPmDNS problem
+// 
+// The latest versions of the ESP32 Board Library (3.0.0 and later) have renamed 
+// an atribute. The code has been modified to reflect this.  
+// If you are using an earlier version then you need uncomment the folowing line
+
+// #define USING_OLDER_ESPMDNS true
+
+// ********************************************************************************************
 
 // false = Counter clockwise  true = clockwise
 #define ENCODER_ROTATION_CLOCKWISE_IS_INCREASE_SPEED                     false
@@ -34,6 +43,10 @@
 #define CHOSEN_KEYPAD_7_FUNCTION     DIRECTION_REVERSE
 #define CHOSEN_KEYPAD_8_FUNCTION     E_STOP
 #define CHOSEN_KEYPAD_9_FUNCTION     DIRECTION_FORWARD
+// #define CHOSEN_KEYPAD_A_FUNCTION     CUSTOM_1
+// #define CHOSEN_KEYPAD_B_FUNCTION     CUSTOM_2
+// #define CHOSEN_KEYPAD_C_FUNCTION     CUSTOM_3
+// #define CHOSEN_KEYPAD_D_FUNCTION     CUSTOM_4
 
 // text that will appear when you press #
 // if you rearrange the items above, modify this text to suit    * and # cannot be remapped here
@@ -103,6 +116,19 @@
 #define CHOSEN_ADDITIONAL_BUTTON_4_FUNCTION     FUNCTION_NULL   // GPIO 27
 #define CHOSEN_ADDITIONAL_BUTTON_5_FUNCTION     FUNCTION_NULL   // GPIO 32
 #define CHOSEN_ADDITIONAL_BUTTON_6_FUNCTION     FUNCTION_NULL   // GPIO 33
+
+// *******************************************************************************************************************
+// additional / optional commands
+// these can be any legitimate WiThrottle protocol command encosed in quotes or double quotes
+// comands MOST not include the opening and closing angle brackets < or >
+
+// #define CUSTOM_COMMAND_1 "s"
+// #define CUSTOM_COMMAND_2 "/START 300"
+// #define CUSTOM_COMMAND_3 "/START 500"
+// #define CUSTOM_COMMAND_4 ""
+// #define CUSTOM_COMMAND_5 ""
+// #define CUSTOM_COMMAND_6 ""
+// #define CUSTOM_COMMAND_7 ""
 
 // *******************************************************************************************************************
 // additional / optional buttons

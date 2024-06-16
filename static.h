@@ -1,5 +1,5 @@
 const String appName = "DccExController";
-const String appVersion = "              v0.19";
+const String appVersion = "              v0.20";
 
 
 #ifndef MENU_TEXT_MENU
@@ -564,6 +564,116 @@ const char ssidPasswordBlankChar = 164;
     OLED_TYPE
 #endif
 
+// *******************************************************************************************************************
+// additional / optional commands
+//  these can be any legitimate DCC-EX Native protocol command
+
+#ifndef CUSTOM_COMMAND_1
+   #define CUSTOM_COMMAND_1 ""
+#endif 
+#ifndef CUSTOM_COMMAND_2
+   #define CUSTOM_COMMAND_2 ""
+#endif 
+#ifndef CUSTOM_COMMAND_3
+   #define CUSTOM_COMMAND_3 ""
+#endif 
+#ifndef CUSTOM_COMMAND_4
+   #define CUSTOM_COMMAND_4 ""
+#endif 
+#ifndef CUSTOM_COMMAND_5
+   #define CUSTOM_COMMAND_5 ""
+#endif 
+#ifndef CUSTOM_COMMAND_6
+   #define CUSTOM_COMMAND_6 ""
+#endif 
+#ifndef CUSTOM_COMMAND_7
+   #define CUSTOM_COMMAND_7 ""
+#endif 
+
+// *******************************************************************************************************************
+// default direct functions
+
+// Labels that will appear in the UI
+// These should match the actual commands below
+
+#ifndef CHOSEN_KEYPAD_0_DISPLAY_NAME
+   #define CHOSEN_KEYPAD_0_DISPLAY_NAME "0 Lights"
+#endif
+#ifndef CHOSEN_KEYPAD_1_DISPLAY_NAME
+   #define CHOSEN_KEYPAD_1_DISPLAY_NAME "1 Bell"
+#endif
+#ifndef CHOSEN_KEYPAD_2_DISPLAY_NAME
+   #define CHOSEN_KEYPAD_2_DISPLAY_NAME "2 Horn"
+#endif
+#ifndef CHOSEN_KEYPAD_3_DISPLAY_NAME
+   #define CHOSEN_KEYPAD_3_DISPLAY_NAME "3 F3"
+#endif
+#ifndef CHOSEN_KEYPAD_4_DISPLAY_NAME
+   #define CHOSEN_KEYPAD_4_DISPLAY_NAME "4 F4"
+#endif
+#ifndef CHOSEN_KEYPAD_5_DISPLAY_NAME
+   #define CHOSEN_KEYPAD_5_DISPLAY_NAME "5 Nxt Ttl"
+#endif
+#ifndef CHOSEN_KEYPAD_6_DISPLAY_NAME
+   #define CHOSEN_KEYPAD_6_DISPLAY_NAME "6 X Spd"
+#endif
+#ifndef CHOSEN_KEYPAD_7_DISPLAY_NAME
+   #define CHOSEN_KEYPAD_7_DISPLAY_NAME "7 Rev"
+#endif
+#ifndef CHOSEN_KEYPAD_8_DISPLAY_NAME
+   #define CHOSEN_KEYPAD_8_DISPLAY_NAME "8 Estop"
+#endif
+#ifndef CHOSEN_KEYPAD_9_DISPLAY_NAME
+   #define CHOSEN_KEYPAD_9_DISPLAY_NAME "9 Fwd"
+#endif
+
+// actual commands
+
+#ifndef CHOSEN_KEYPAD_0_FUNCTION
+   #define CHOSEN_KEYPAD_0_FUNCTION     FUNCTION_0
+#endif
+#ifndef CHOSEN_KEYPAD_1_FUNCTION
+   #define CHOSEN_KEYPAD_1_FUNCTION     FUNCTION_1
+#endif
+#ifndef CHOSEN_KEYPAD_2_FUNCTION
+   #define CHOSEN_KEYPAD_2_FUNCTION     FUNCTION_2
+#endif
+#ifndef CHOSEN_KEYPAD_3_FUNCTION
+   #define CHOSEN_KEYPAD_3_FUNCTION     FUNCTION_3
+#endif
+#ifndef CHOSEN_KEYPAD_4_FUNCTION
+   #define CHOSEN_KEYPAD_4_FUNCTION     FUNCTION_4
+#endif
+#ifndef CHOSEN_KEYPAD_5_FUNCTION
+   #define CHOSEN_KEYPAD_5_FUNCTION     NEXT_THROTTLE
+#endif
+#ifndef CHOSEN_KEYPAD_6_FUNCTION
+   #define CHOSEN_KEYPAD_6_FUNCTION     SPEED_MULTIPLIER
+#endif
+#ifndef CHOSEN_KEYPAD_7_FUNCTION
+   #define CHOSEN_KEYPAD_7_FUNCTION     DIRECTION_REVERSE
+#endif
+#ifndef CHOSEN_KEYPAD_8_FUNCTION
+   #define CHOSEN_KEYPAD_8_FUNCTION     E_STOP
+#endif
+#ifndef CHOSEN_KEYPAD_9_FUNCTION
+   #define CHOSEN_KEYPAD_9_FUNCTION     DIRECTION_FORWARD
+#endif
+#ifndef CHOSEN_KEYPAD_A_FUNCTION
+   #define CHOSEN_KEYPAD_A_FUNCTION     CUSTOM_1
+#endif
+#ifndef CHOSEN_KEYPAD_B_FUNCTION
+   #define CHOSEN_KEYPAD_B_FUNCTION     CUSTOM_2
+#endif
+#ifndef CHOSEN_KEYPAD_C_FUNCTION
+   #define CHOSEN_KEYPAD_C_FUNCTION     CUSTOM_3
+#endif
+#ifndef CHOSEN_KEYPAD_D_FUNCTION
+   #define CHOSEN_KEYPAD_D_FUNCTION     CUSTOM_4
+#endif
+   
+// *******************************************************************************************************************
+
 #ifndef USE_BATTERY_TEST
    #define USE_BATTERY_TEST false
 #endif
@@ -575,4 +685,18 @@ const char ssidPasswordBlankChar = 164;
 #endif
 #ifndef USE_BATTERY_SLEEP_AT_PERCENT
    #define USE_BATTERY_SLEEP_AT_PERCENT 3
+#endif
+
+
+// ***************************************************
+//  ESPmDNS problem
+
+#ifndef USING_OLDER_ESPMDNS
+   #define USING_OLDER_ESPMDNS false
+#endif
+
+#if USING_OLDER_ESPMDNS == true
+  #define ESPMDNS_IP_ATTRIBUTE_NAME MDNS.IP(i)
+#else
+  #define ESPMDNS_IP_ATTRIBUTE_NAME MDNS.address(i)
 #endif
