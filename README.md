@@ -21,7 +21,7 @@ A DccExController is a simple DIY, handheld controller that talks to a wThrottle
 
 ## Building
 
-Required Components
+### Required Components
 
 * WeMos Lite LOLIN32  (ESP32 Arduino with LiPo charger) ([Example](https://www.ebay.com.au/itm/284800618644?hash=item424f709094:g:-soAAOSwHslfC9ce&frcectupt=true))
 * 3x4 Keypad  ([Example](https://www.jaycar.com.au/12-key-numeric-keypad/p/SP0770?pos=2&queryId=20aedf107668ad42c6fe1f8b7f7a9ca7))
@@ -31,14 +31,50 @@ Required Components
 * Case - my one was 3d printed (see below)
 * Knob ([Example](https://www.jaycar.com.au/35mm-knob-matching-equipment-style/p/HK7766?pos=7&queryId=cbd19e2486968bca41273cc2dbce54a4&sort=relevance))
 * Wire - If you plan to solder the connections,which is the recommended approach, then stranded, coloured wire is advisable.  ([Example](https://www.jaycar.com.au/rainbow-cable-16-core-sold-per-metre/p/WM4516))
-* Optional: Up to 7 additional buttons can be added, each with their own independent commands.
+
+### Optional Components
+
+* Optional: Up to 7 additional push buttons can be added, each with their own independent commands. ([Example](https://www.jaycar.com.au/red-miniature-pushbutton-spst-momentary-action-125v-1a-rating/p/SP0710))
+* Optional: A 1.3" OLED Display 128x64 can be used instead of the 0.96" OLED Display 128x64 ([Example](https://www.aliexpress.com/item/32683094040.html?spm=a2g0o.order_list.order_list_main.110.25621802jRBB7y)) Note: You will need to make a small configuration change for this to work correctly.
+* Optional: You can use a 4x4 keypad instead of the 3x4 keypad. Note: You will need to make a small configuration change in ``config_buttons.h`` for this to work correctly.
+
+### Pinouts
 
 *Standard Configuration Pinouts*
 ![Assembly diagram](WiTcontroller%20pinouts%20v0.1.png)
 
 *Pinouts for Optional Additional Buttons*
 ![Assembly diagram - Optional Additional Buttons](WiTcontroller%20-%20Optional%20Buttons%20-%20pinouts%20v0.1.png)
+*Default Pins for the keypads*
 
+3x4 Keypad - Left to Right
+ * C1 PIN 0
+ * R0 PIN 19
+ * C0 PIN 4
+ * R3 PIN 16
+ * C2 PIN 2
+ * R2 PIN 17
+ * R1 PIN 18
+
+4x4 keypad - Left to Right
+ * C0 PIN 4
+ * C1 PIN 0
+ * C2 PIN 2
+ * C3 PIN 33
+ * R0 PIN 19
+ * R1 PIN 18
+ * R2 PIN 17
+ * R3 PIN 16
+ 
+Notes: 
+
+* Different keypads often arrange the pins on the base of the keypad differently.  So it is important make sure the pins on the keypad are correctly identified and adjusted as needed.
+
+### Case
+
+![3D printer case 1](images/witcontroller1.jpg)
+
+![3D printed case 2](images/witcontroller1.jpg)
 
 Notes:
 
