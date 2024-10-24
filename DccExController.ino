@@ -1974,7 +1974,7 @@ void speedEstop() {
 void speedEstopCurrentLoco() {
   // dccexProtocol.emergencyStop(currentThrottleIndexChar);
 //*************
-    throttles[currentThrottleIndex]->setSpeed(0);
+    throttles[currentThrottleIndex]->setSpeed(-1);
 //*************
   currentSpeed[currentThrottleIndex] = 0;
   debug_println("Speed EStop Curent Loco"); 
