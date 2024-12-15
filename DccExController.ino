@@ -1203,7 +1203,7 @@ void loop() {
       witServiceLoop();
     } else {
       dccexProtocol.check();    // parse incoming messages
-      dccexProtocol.getLists(true, true, true, true);
+      dccexProtocol.getLists(true, true, true, false);
 
       setLastServerResponseTime(false);
 
@@ -1903,7 +1903,7 @@ void loadFunctionLabels(int multiThrottleIndex) {  // from Roster entry
   debug_println("loadFunctionLabels()");
   if (throttles[multiThrottleIndex]->getLocoCount() > 0) {
     for (int i=0; i<MAX_FUNCTIONS; i++) {
-      char* fName = throttles[multiThrottleIndex]->getFirst()->getLoco()->getFunctionName(i);
+      const char* fName = throttles[multiThrottleIndex]->getFirst()->getLoco()->getFunctionName(i);
       bool fMomentary = throttles[multiThrottleIndex]->getFirst()->getLoco()->isFunctionMomentary(i);
       if (fName != nullptr) {
         // debug_print("loadFunctionLabels() "); 
