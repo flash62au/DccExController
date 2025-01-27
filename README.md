@@ -323,14 +323,14 @@ Recommend adding a physical power switch as this will continually drain the batt
 
 ## Change Log
 
-### V0.22
+### V0.23
 - make roster momentary functions obey momentary if selected from the menu
 
 ### V0.22
 - fix for ``E_STOP_CURRENT_LOCO``  
 
 ### V0.21
-- automated fix the latest versions of the ESP32 Board Library (3.0.0 and later) having renamed an atribute. The code now automatically adjusts for this.  
+- automated fix the latest versions of the ESP32 Board Library (3.0.0 and later) having renamed an attribute. The code now automatically adjusts for this.  
 
 ### V0.20
 - support for 4x4 keypad
