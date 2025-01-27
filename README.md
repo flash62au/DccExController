@@ -131,6 +131,7 @@ The instructions below are for using the Arduino IDE and GitHub Desktop. Visual 
     * Click *Upload* 
 
 Notes: 
+   * DccExController version 0.23 or later requires DCCEXProtocol version 1.0.1 or later.
    * DccExController version 0.20 or later requires DCCEXProtocol version 0.0.16 or later.
    * DccExController version 0.16 or later requires DCCEXProtocol version 0.0.12 or later.
    * DccExController version 0.12 or later requires DCCEXProtocol version 0.0.10 or later.
@@ -321,6 +322,9 @@ Recommend adding a physical power switch as this will continually drain the batt
 ---
 
 ## Change Log
+
+### V0.22
+- make roster momentary functions obey momentary if selected from the menu
 
 ### V0.22
 - fix for ``E_STOP_CURRENT_LOCO``  

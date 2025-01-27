@@ -27,8 +27,9 @@ const String passwords[maxSsids] = {"password1", "password2", "password3", "pass
 
 // ********************************************************************************************
 // uncomment and increase the #define line below if you need to override the default buffer size 
-// (default, if not specified is 500)
+// (default, if not specified is 500 and 50)
 //#define MAX_BUFFER_SIZE 1000
+//#define MAX_COMMAND_PARAMS 50
 
 // *******************************************************************************************************************
 // Roster selection

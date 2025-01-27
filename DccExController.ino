@@ -42,6 +42,9 @@
 #ifndef MAX_BUFFER_SIZE
  #define MAX_BUFFER_SIZE 500
 #endif
+#ifndef MAX_COMMAND_PARAMS
+ #define MAX_COMMAND_PARAMS 50
+#endif
 
 int keypadUseType = KEYPAD_USE_OPERATION;
 int encoderUseType = ENCODER_USE_OPERATION;
@@ -120,6 +123,7 @@ int rosterAddress[maxRoster];
 
 int page = 0;
 int functionPage = 0;
+bool functionHasBeenSelected = false;
 
 boolean searchRosterOnEntryOfDccAddress = SEARCH_ROSTER_ON_ENTRY_OF_DCC_ADDRESS;
 
@@ -354,7 +358,7 @@ char getMultiThrottleChar(int multiThrottleIndex) {
 }
 
 WiFiClient client;
-DCCEXProtocol dccexProtocol(MAX_BUFFER_SIZE);
+DCCEXProtocol dccexProtocol(MAX_BUFFER_SIZE, MAX_COMMAND_PARAMS);
 MyDelegate myDelegate;
 int deviceId = random(1000,9999);
 
@@ -1094,11 +1098,15 @@ void initialiseAdditionalButtons() {
   for (int i = 0; i < MAX_ADDITIONAL_BUTTONS; i++) { 
     if (additionalButtonActions[i] != FUNCTION_NULL) { 
       debug_print("Additional Button: "); debug_print(i); debug_print(" pin:"); debug_println(additionalButtonPin[i]);
-      pinMode(additionalButtonPin[i], additionalButtonType[i]);
-      if (additionalButtonType[i] == INPUT_PULLUP) {
-        additionalButtonLastRead[i] = HIGH;
+      if (additionalButtonPin[i] >= 0) {
+        pinMode(additionalButtonPin[i], additionalButtonType[i]);
+        if (additionalButtonType[i] == INPUT_PULLUP) {
+          additionalButtonLastRead[i] = HIGH;
+        } else {
+          additionalButtonLastRead[i] = LOW;
+        }
       } else {
-        additionalButtonLastRead[i] = LOW;
+        debug_print("Additional Button: IGNORED: "); debug_print(i); debug_print(" pin:"); debug_println(additionalButtonPin[i]);
       }
     }
     lastAdditionalButtonDebounceTime[i] = 0;
@@ -1160,7 +1168,8 @@ void setup() {
   writeOledArray(false, false, true, true);
 
   delay(1000);
-  debug_println("Start"); 
+  debug_println("Start");   
+  debug_print("DccExController - Version: "); debug_println(appVersion);
 
   rotaryEncoder.begin();  //initialize rotary encoder
   rotaryEncoder.setup(readEncoderISR);
@@ -1233,7 +1242,7 @@ void loop() {
 // *********************************************************************************
 
 void doKeyPress(char key, boolean pressed) {
-  debug_print("doKeyPress(): "); 
+  debug_println("doKeyPress(): Start: "); 
 
   if (pressed)  { //pressed
     switch (keypadUseType) {
@@ -1532,13 +1541,29 @@ void doKeyPress(char key, boolean pressed) {
     }
 
   } else {  // released
-    if (keypadUseType == KEYPAD_USE_OPERATION) {
-      if ( (!menuCommandStarted) && (key>='0') && (key<='D')) { // only process releases for the numeric keys + A,B,C,D and only if a menu command has not be started
-        // debug_println("Operation - Process key release");
-        doDirectCommand(key, false);
-      } else {
-        // debug_println("Non-Operation - Process key release");
-      }
+    debug_println("doKeyPress(): released"); 
+    switch (keypadUseType) {
+      case KEYPAD_USE_OPERATION:
+        if ( (!menuCommandStarted) && (key>='0') && (key<='D')) { // only process releases for the keypad + A,B,C,D and only if a menu command has not be started
+          debug_println("doKeyPress(): Operation - Process key release KEYPAD_USE_OPERATION");
+          doDirectCommand(key, false);
+        } else {
+          debug_println("doKeyPress(): Non-Operation - Don't process key release");
+        }
+        break;
+    
+      case KEYPAD_USE_SELECT_FUNCTION:
+        if (functionHasBeenSelected) {
+          debug_println("doKeyPress(): Operation - Process key release KEYPAD_USE_SELECT_FUNCTION");
+          debug_print("doKeyPress(): Function: "); debug_print((key - '0')+(functionPage*10));
+          debug_print(" Momentary?: "); debug_println(boolToYesNo(functionMomentary[currentThrottleIndex][(key - '0')+(functionPage*10)]));
+          if (functionMomentary[currentThrottleIndex][(key - '0')+(functionPage*10)]) { // if it is momentary, turn it off
+            doFunction(currentThrottleIndex, (key - '0')+(functionPage*10), false, true);
+          }
+          keypadUseType = KEYPAD_USE_OPERATION;
+          functionHasBeenSelected = false;
+        }
+        break;
     }
   }
 
@@ -1670,6 +1695,10 @@ void doDirectAction(int buttonAction) {
       }
       case MAX_THROTTLE_DECREASE: {
         changeNumberOfThrottles(false);
+        break; 
+      }
+      case REQUEST_SERVER_INFO: {
+        dccexProtocol.requestServerVersion();
         break; 
       }
 
@@ -2151,18 +2180,26 @@ void doDirectFunction(int multiThrottleIndex, int functionNumber, boolean presse
   // debug_print("doDirectFunction(): end"); 
 }
 
-void doFunction(int multiThrottleIndex, int functionNumber, boolean pressed) {   // currently ignoring the pressed value
+void doFunction(int multiThrottleIndex, int functionNumber, bool pressed) {
+  doFunction(multiThrottleIndex, functionNumber, pressed, false);
+}
+void doFunction(int multiThrottleIndex, int functionNumber, bool pressed, bool obeyPressed) {   // currently ignoring the pressed value
   debug_print("doFunction(): multiThrottleIndex "); debug_println(multiThrottleIndex);
   if (throttles[currentThrottleIndex]->getLocoCount() > 0) {
-    doFunctionWhichLocosInConsist(multiThrottleIndex, functionNumber, true);
-    if (!functionStates[multiThrottleIndex][functionNumber]) {
-      debug_print("fn: "); debug_print(functionNumber); debug_println(" Pressed");
-      // functionStates[functionNumber] = true;
+    if (!obeyPressed) {
+      doFunctionWhichLocosInConsist(multiThrottleIndex, functionNumber, true);
+      if (!functionStates[multiThrottleIndex][functionNumber]) {
+        debug_print("fn: "); debug_print(functionNumber); debug_println(" Pressed FORCED");
+        // functionStates[functionNumber] = true;
+      } else {
+        delay(20);
+        doFunctionWhichLocosInConsist(multiThrottleIndex, functionNumber, false);
+        debug_print("fn: "); debug_print(functionNumber); debug_println(" Released FORCED");
+        // functionStates[functionNumber] = false;
+      }
     } else {
-      delay(20);
-      doFunctionWhichLocosInConsist(multiThrottleIndex, functionNumber, false);
-      debug_print("fn: "); debug_print(functionNumber); debug_println(" Released");
-      // functionStates[functionNumber] = false;
+      doFunctionWhichLocosInConsist(multiThrottleIndex, functionNumber, pressed);
+      debug_print("fn: "); debug_print(functionNumber); debug_println(" NOT FORCED");
     }
     writeOledSpeed(); 
   }
@@ -2176,7 +2213,7 @@ void doFunctionWhichLocosInConsist(int multiThrottleIndex, int functionNumber, b
   debug_print(" fn: "); debug_println(functionNumber);
   if (functionFollow[multiThrottleIndex][functionNumber]==CONSIST_LEAD_LOCO) {
     throttles[multiThrottleIndex]->setFunction(throttles[multiThrottleIndex]->getFirst()->getLoco(), functionNumber,pressed);
-  } else {  // at the momemnt the only other option in CONSIST_ALL_LOCOS
+  } else {  // at the momemnt the only other option is CONSIST_ALL_LOCOS
     for (int i=0; i<throttles[multiThrottleIndex]->getLocoCount(); i++) {
       throttles[multiThrottleIndex]->setFunction(throttles[multiThrottleIndex]->getLocoAtPosition(i)->getLoco(), functionNumber,pressed);
     }
@@ -2335,8 +2372,9 @@ void selectFunctionList(int selection) {
     String function = functionLabels[currentThrottleIndex][selection];
     debug_print("Function Selected: "); debug_println(function);
     doFunction(currentThrottleIndex, selection, true);
+    functionHasBeenSelected = true;    
     writeOledSpeed();
-    keypadUseType = KEYPAD_USE_OPERATION;
+    // keypadUseType = KEYPAD_USE_OPERATION;   // don't reset it now.  Do so on the release.;
   }
 }
 
@@ -2447,6 +2485,10 @@ void _processLocoUpdate(Loco* loco) {
     debug_println("_processLocoUpdate() loco not found");  
   }
   debug_println("_processLocoUpdate() end");
+}
+
+String boolToYesNo(bool value) {
+  return value ? "Yes" : "No";
 }
 
 // *********************************************************************************
@@ -2594,6 +2636,7 @@ void writeOledFunctionList(String soFar) {
 
   menuIsShowing = true;
   keypadUseType = KEYPAD_USE_SELECT_FUNCTION;
+  functionHasBeenSelected = false;
   
   if (soFar == "") { // nothing entered yet
     clearOledArray();

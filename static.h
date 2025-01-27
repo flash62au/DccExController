@@ -1,5 +1,5 @@
 const String appName = "DccExController";
-const String appVersion = "              v0.22";
+const String appVersion = "              v0.23";
 
 
 #ifndef MENU_TEXT_MENU
