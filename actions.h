@@ -71,3 +71,5 @@
 #define CUSTOM_5 125
 #define CUSTOM_6 126
 #define CUSTOM_7 127
+
+#define SHOW_HIDE_BATTERY 504   // the battery test must be enabled for this to have any effect

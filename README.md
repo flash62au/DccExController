@@ -102,23 +102,29 @@ The instructions below are for using the Arduino IDE and GitHub Desktop. Visual 
        * Install *GitHub Desktop* from https://desktop.github.com/
        * Create a free account on GitHub and authorise the app to allow it to connect top GitHub
        * Select *file* -> *Clone Repository* - or 'Clone an repository from the internet' from the welcome page then select the 'URL' tab
-       * Enter *https://github.com/flash62au/WiTcontroller* as the URL
+       * Enter *https://github.com/flash62au/DccExController* as the URL
        * Select a local folder to install it.  The default folder for the Arduino usually looks like "...username\Documents\Arduino\". (This is a good but not essential place to put it.)
        * Click *Clone*
        * **Subsequently**  (Anytime after the first 'clone')
          * click *Fetch Origin* and any changes to the code will be bought down to you PC, but you config_buttons.h and config_network.h will not be touched.
     * Download 
-       * Open *https://github.com/flash62au/WiTcontroller*
+       * Open *https://github.com/flash62au/DccExController*
        * Click the green "Code" button and select download zip
        * Extract the zip file to a local folder.  The default folder for the Arduino usually looks like "...username\Documents\Arduino\". This is a good but not essential place to put it.
-4. Load the needed libraries to your PC. These can loaded from the *Library Manager* in the *Arduino IDE*.
-    * *U8g2lib.h* -  Search for "U8g2"   Install version 2.34.22
-    * *AiEsp32RotaryEncoder.h* - search for "Ai Esp32 Rotary Encoder"  Install Version 1.6, or later
-    * *Keypad.h* - Search for "Keypad" by Mark Stanley   install version 3.1.1, or later
+4. Load the needed libraries to your PC. <br/> These *MUST BE* loaded from the *Library Manager* in the *Arduino IDE*. 
+    * *U8g2lib.h* -  Search for "U8g2".   Install version 2.33.3 or later. <br/> (later versions should work, but go back to this 2.35.30 if you have problems.)
+    * *AiEsp32RotaryEncoder.h* - search for "Ai Esp32 Rotary Encoder".  Install Version 1.4
+    * *Keypad.h* - Search for "Keypad" by Mark Stanley.  Install version 3.1.1 or later. <br/> (later versions should work, but go back to this 3.1.1 if you have problems.)
     * *dccexProtocol.h* - Search for "DCCEXProtocol"  Install version 0.0.6, or later if available
+   
+      Note: <br/> **DO NOT** download these libraries *directly*. Use the *Library Manager*. <br/> **DO NOT** put them in the WiTcontroller folder.
+
 5. These should have been automatically installed when you downloaded the esp32 boards.  *YOU SHOULD NOT NEED TO DO ANYTHING SPECIFIC TO GET THESE*
     * *WiFi.h*  - https://github.com/espressif/arduino-esp32/tree/master/libraries/WiFi
     * *ESPmDNS.h* - https://github.com/espressif/arduino-esp32/blob/master/libraries/ESPmDNS
+
+      Notes: <br/> **DO NOT** download these libraries *directly*. Use the *Boards Manager*. <br/> **DO NOT** put them in the WiTcontroller folder. <br/> These libraries do not appear in your list of libraries, but will be available to use regardless. (The files are actually buried away in a subfolder of the ESP32 Boards library.)
+
 6. Copy '**config_network_example.h**' to a new file to '**config_network.h**'.
     * Then edit it to include the network ssids you want to use.  (Not essential, but entering passwords via the encoder is tedious.)
 7. Copy '**config_buttons_example.h**' to a new file '**config_buttons.h**'.
@@ -286,6 +292,7 @@ Note: you need to edit config_buttons.h to alter these assignments   (copy confi
 - POWER_TOGGLE
 - POWER_ON
 - POWER_OFF
+- SHOW_HIDE_BATTERY
 - DIRECTION_TOGGLE
 - DIRECTION_FORWARD
 - DIRECTION_REVERSE
@@ -329,12 +336,61 @@ config_buttons.h can include the following optional defines:
 
 ### Instructions for optional use of a voltage divider to show the battery charge level
 
-TBA
-
-Recommend adding a physical power switch as this will continually drain the battery, even when not being used.
-
 *Pinouts for Optional Battery Monitor*
 ![Assembly diagram - Optional Battery Monitor](WiTcontroller%20-%20Optional%20battery%20monitor.png)
+
+See diagram above for how to wire in the volage divider.  47k resistors are used, but this can be varied as long as the output to the pin is limited to below 3.3v. See additional information related to the Pangodream Library that WiTcontroller uses here... https://www.pangodream.es/tag/18650-ion-li
+
+The diagram has the voltage divider spliced into battery leads, but you can solder the positive in to the back of the battery connector (on the ESP32) if you prefer. The ground can be taken from any ground pin.
+
+*To enable the battery monitor*, set the following to ``true``. The default is ``false``.
+
+``#define USE_BATTERY_TEST true``
+
+*To set which pin to use.* The default is ``34``.  In theory 34, 35, 36, or 39 should be able to be used, but only 34 and 36 have been tested.   (36 is marked 'VP' on the board.  39 is marked 'VN' on the board.)
+
+``#define BATTERY_TEST_PIN 34``
+
+If the battery does not show 100% when plugged into the charger, you may need to adjust this value. The default is ``1.7``.
+
+``#define BATTERY_CONVERSION_FACTOR 1.7``
+
+    To help work out the correct BATTERY_CONVERSION_FACTOR, you can enable so serial monitor message that will assist.
+
+    In your ``config_buttons.h`` add (or uncomment) these defines:
+    
+      #define WITCONTROLLER_DEBUG    0
+      #define DEBUG_LEVEL   2
+
+    DEBUG_LEVEL must be 2 or greater
+
+    a) Make sure your battery is fully charged.
+    b) Upload the code and open the serial monitor. 
+    c) Wait. Don't connect.
+    You will see lines like...
+
+      BATTERY TestValue: 100 (10003)
+      BATTERY lastAnalogReadValue: 2491 (10003)
+      BATTERY If Battery full, BATTERY_CONVERSION_FACTOR should be: 1.69 (10014)
+
+    Let it run for a while.
+    d) Note one of the recommend values (it will vary a bit) and enter it into the define in your config_buttons.h
+    e) Re-upload code and connect to a server
+    f) Confirm that the battery reads 100% (repeat if not)
+    g) Run the HandCab on battery for few hours and confirm the battery level is droping at an expected rate. (adjust the conversion factor if not.)
+
+*To show the calculated percentage*, set the following to ``true`` The default is ``false``.
+
+``#define USE_BATTERY_PERCENT_AS_WELL_AS_ICON true``
+
+*To force the HandCab to go to sleep at a specific level*, set this value. (e.g. to 3 or 5.) A value of less than zero (e.g. -1) will disable the feature. By default it is disabled (-1).
+
+``#define USE_BATTERY_SLEEP_AT_PERCENT 3``
+
+The display of the battery can be temporarily toggled by setting a key or button to ``SHOW_HIDE_BATTERY``.  The display will cycle between none, icon only and icon plus percent value. Note that ``USE_BATTERY_TEST`` must be set to `true` for this to have any effect.
+
+Note: 
+I recommend adding a physical power switch to disconnect the battery as this feature will, slowly, continually drain the battery, even when not being used.
 
 ---
 ---
@@ -343,6 +399,8 @@ Recommend adding a physical power switch as this will continually drain the batt
 
 ### V0.23
 - make roster momentary functions obey momentary if selected from the menu
+- moved the battery indicator to the top row
+- added the ``BATTERY_CONVERSION_FACTOR`` define
 
 ### V0.22
 - fix for ``E_STOP_CURRENT_LOCO``  

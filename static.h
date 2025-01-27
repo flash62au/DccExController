@@ -1,5 +1,5 @@
 const String appName = "DccExController";
-const String appVersion = "              v0.23";
+const String appVersion = "  v0.23";
 
 
 #ifndef MENU_TEXT_MENU
@@ -87,6 +87,12 @@ const int last_oled_screen_extra_submenu =    6;
 const int last_oled_screen_all_locos =        7;
 const int last_oled_screen_edit_consist =     8;
 const int last_oled_screen_direct_commands =  9;
+
+typedef enum ShowBattery {
+    BATTERY_NONE = 0,
+    BATTERY_ICON_ONLY = 1,
+    BATTERY_ICON_AND_PERCENT = 2
+} ShowBattery;
 
 #ifndef DIRECT_COMMAND_LIST
   #define DIRECT_COMMAND_LIST            "Direct Commands"
@@ -450,12 +456,9 @@ const char ssidPasswordBlankChar = 164;
 #define FONT_THROTTLE_NUMBER u8g2_font_neuecraft_tr
 #define FONT_PASSWORD u8g2_font_9x15_tf
 #define FONT_SPEED u8g2_font_profont29_mr
-// #define FONT_DIRECTION u8g2_font_profont17_tr
 #define FONT_DIRECTION u8g2_font_neuecraft_tr
-// #define FONT_TRACK_POWER u8g2_font_profont10_tf
-#define FONT_TRACK_POWER u8g2_font_open_iconic_all_1x_t
-#define FONT_HEARTBEAT u8g2_font_open_iconic_all_1x_t
-#define FONT_SPEED_STEP u8g2_font_open_iconic_all_1x_t
+#define FONT_GLYPHS u8g2_font_open_iconic_all_1x_t
+
 #define FONT_NEXT_THROTTLE u8g2_font_6x12_m_symbols
 
 #define CONSIST_LEAD_LOCO 0
@@ -679,6 +682,9 @@ const char ssidPasswordBlankChar = 164;
 #endif
 #ifndef BATTERY_TEST_PIN
    #define BATTERY_TEST_PIN 34
+#endif
+#ifndef BATTERY_CONVERSION_FACTOR
+   #define BATTERY_CONVERSION_FACTOR 1.7
 #endif
 #ifndef USE_BATTERY_PERCENT_AS_WELL_AS_ICON
    #define USE_BATTERY_PERCENT_AS_WELL_AS_ICON false

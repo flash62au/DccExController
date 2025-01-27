@@ -71,11 +71,20 @@ int lastEncoderValue = 0;
 
 // battery test values
 bool useBatteryTest = USE_BATTERY_TEST;
+#if USE_BATTERY_TEST
+  #if USE_BATTERY_PERCENT_AS_WELL_AS_ICON
+    ShowBattery showBatteryTest = BATTERY_ICON_AND_PERCENT;
+  #else 
+    ShowBattery showBatteryTest = BATTERY_ICON_ONLY;
+  #endif
+#else
+  ShowBattery showBatteryTest = BATTERY_NONE;
+#endif
 int batteryTestPin = BATTERY_TEST_PIN;
 bool useBatteryPercentAsWellAsIcon = USE_BATTERY_PERCENT_AS_WELL_AS_ICON;
 int lastBatteryTestValue = 0; 
 double lastBatteryCheckTime = 0;
-Pangodream_18650_CL BL(BATTERY_TEST_PIN);
+Pangodream_18650_CL BL(BATTERY_TEST_PIN, BATTERY_CONVERSION_FACTOR);
 
 // server variables
 // boolean ssidConnected = false;
@@ -1681,6 +1690,10 @@ void doDirectAction(int buttonAction) {
         powerToggle();
         break; 
       }
+      case SHOW_HIDE_BATTERY: {
+        batteryShowToggle();
+        break; 
+      }
       case NEXT_THROTTLE: {
         nextThrottle();
         break; 
@@ -2269,6 +2282,23 @@ void changeNumberOfThrottles(bool increase) {
         nextThrottle();
       }
     }
+  }
+  writeOledSpeed();
+}
+
+void batteryShowToggle() {
+  debug_println("batteryShowToggle()");
+  switch (showBatteryTest) {
+    case BATTERY_ICON_ONLY: 
+      showBatteryTest = BATTERY_ICON_AND_PERCENT;
+      break;
+    case BATTERY_ICON_AND_PERCENT: 
+      showBatteryTest = BATTERY_NONE;
+      break;
+    case BATTERY_NONE: 
+    default:
+      showBatteryTest = BATTERY_ICON_ONLY;
+      break;
   }
   writeOledSpeed();
 }
@@ -2908,7 +2938,7 @@ void writeOledSpeed() {
   if (speedStep != currentSpeedStep[currentThrottleIndex]) {
     // oledText[3] = "X " + String(speedStepCurrentMultiplier);
     u8g2.setDrawColor(1);
-    u8g2.setFont(FONT_SPEED_STEP);
+    u8g2.setFont(FONT_GLYPHS);
     u8g2.drawGlyph(1, 38, glyph_speed_step);
     u8g2.setFont(FONT_DEFAULT);
     // u8g2.drawStr(0, 37, ("X " + String(speedStepCurrentMultiplier)).c_str());
@@ -2920,13 +2950,13 @@ void writeOledSpeed() {
     u8g2.drawRBox(0,40,9,9,1);
     u8g2.setDrawColor(0);
   }
-  u8g2.setFont(FONT_TRACK_POWER);
+  u8g2.setFont(FONT_GLYPHS);
   // u8g2.drawStr(0, 48, label_track_power.c_str());
   u8g2.drawGlyph(1, 48, glyph_track_power);
   u8g2.setDrawColor(1);
 
   if (!heartbeatCheckEnabled) {
-    u8g2.setFont(FONT_HEARTBEAT);
+    u8g2.setFont(FONT_GLYPHS);
     u8g2.drawGlyph(13, 49, glyph_heartbeat_off);
     u8g2.setDrawColor(2);
     u8g2.drawLine(13, 48, 20, 41);
@@ -2958,26 +2988,58 @@ void writeOledSpeed() {
   // debug_println("writeOledSpeed(): end");
 }
 
-void writeOledBattery() {
-  if (useBatteryTest) {
-    // int lastBatteryTestValue = random(0,100);
-    u8g2.setFont(FONT_HEARTBEAT);
-    u8g2.setDrawColor(1);
-    u8g2.drawStr(1, 30, String("Z").c_str());
-    if (lastBatteryTestValue>10) u8g2.drawLine(2, 24, 2, 27);
-    if (lastBatteryTestValue>25) u8g2.drawLine(3, 24, 3, 27);
-    if (lastBatteryTestValue>50) u8g2.drawLine(4, 24, 4, 27);
-    if (lastBatteryTestValue>75) u8g2.drawLine(5, 24, 5, 27);
-    if (lastBatteryTestValue>90) u8g2.drawLine(6, 24, 6, 27);
+// void writeOledBattery() {
+//   if (useBatteryTest) {
+//     // int lastBatteryTestValue = random(0,100);
+//     u8g2.setFont(FONT_GLYPHS);
+//     u8g2.setDrawColor(1);
+//     u8g2.drawStr(1, 30, String("Z").c_str());
+//     if (lastBatteryTestValue>10) u8g2.drawLine(2, 24, 2, 27);
+//     if (lastBatteryTestValue>25) u8g2.drawLine(3, 24, 3, 27);
+//     if (lastBatteryTestValue>50) u8g2.drawLine(4, 24, 4, 27);
+//     if (lastBatteryTestValue>75) u8g2.drawLine(5, 24, 5, 27);
+//     if (lastBatteryTestValue>90) u8g2.drawLine(6, 24, 6, 27);
     
-    u8g2.setFont(FONT_FUNCTION_INDICATORS);
-    if (useBatteryPercentAsWellAsIcon) {
-      u8g2.drawStr(1,22, String(String(lastBatteryTestValue)+"%").c_str());
+//     u8g2.setFont(FONT_FUNCTION_INDICATORS);
+//     if (useBatteryPercentAsWellAsIcon) {
+//       u8g2.drawStr(1,22, String(String(lastBatteryTestValue)+"%").c_str());
+//     }
+//     if(lastBatteryTestValue<5) {
+//       u8g2.drawStr(11,29, String("LOW").c_str());
+//     }
+//     u8g2.setFont(FONT_DEFAULT);
+//   }
+// }
+
+void writeOledBattery() {
+  // debug_print("writeOledBattery(): time: "); debug_println(lastBatteryCheckTime);
+  if ( (useBatteryTest) && (showBatteryTest!=BATTERY_NONE) && (lastBatteryCheckTime>0)) {
+    // debug_println("writeOledBattery(): do it"); 
+    //int lastBatteryTestValue = random(0,100);
+    u8g2.setFont(FONT_GLYPHS);
+    u8g2.setDrawColor(1);
+    // int x = 13; int y = 28;
+    int x = 120; int y = 11;
+    // if (useBatteryPercentAsWellAsIcon) x = 102;
+    if (showBatteryTest==BATTERY_ICON_AND_PERCENT) x = 102;
+    u8g2.drawStr(x, y, String("Z").c_str());
+    if (lastBatteryTestValue>10) u8g2.drawLine(x+1, y-6, x+1, y-3);
+    if (lastBatteryTestValue>25) u8g2.drawLine(x+2, y-6, x+2, y-3);
+    if (lastBatteryTestValue>50) u8g2.drawLine(x+3, y-6, x+3, y-3);
+    if (lastBatteryTestValue>75) u8g2.drawLine(x+4, y-6, x+4, y-3);
+    if (lastBatteryTestValue>90) u8g2.drawLine(x+5, y-6, x+5, y-3);
+    
+    // if (useBatteryPercentAsWellAsIcon) {
+    if (showBatteryTest==BATTERY_ICON_AND_PERCENT) {
+      // x = 13; y = 36;
+      x = 112; y = 10;
+      u8g2.setFont(FONT_FUNCTION_INDICATORS);
+      if(lastBatteryTestValue<5) {
+        u8g2.drawStr(x,y, String("LOW").c_str());
+      } else {
+        u8g2.drawStr(x,y, String(String(lastBatteryTestValue)+"%").c_str());
+      }
     }
-    if(lastBatteryTestValue<5) {
-      u8g2.drawStr(11,29, String("LOW").c_str());
-    }
-    u8g2.setFont(FONT_DEFAULT);
   }
 }
 
