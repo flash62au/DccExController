@@ -117,13 +117,13 @@ The instructions below are for using the Arduino IDE and GitHub Desktop. Visual 
     * *Keypad.h* - Search for "Keypad" by Mark Stanley.  Install version 3.1.1 or later. <br/> (later versions should work, but go back to this 3.1.1 if you have problems.)
     * *dccexProtocol.h* - Search for "DCCEXProtocol"  Install version 0.0.6, or later if available
    
-      Note: <br/> **DO NOT** download these libraries *directly*. Use the *Library Manager*. <br/> **DO NOT** put them in the WiTcontroller folder.
+      Note: <br/> **DO NOT** download these libraries *directly*. Use the *Library Manager*. <br/> **DO NOT** put them in the DccExController folder.
 
 5. These should have been automatically installed when you downloaded the esp32 boards.  *YOU SHOULD NOT NEED TO DO ANYTHING SPECIFIC TO GET THESE*
     * *WiFi.h*  - https://github.com/espressif/arduino-esp32/tree/master/libraries/WiFi
     * *ESPmDNS.h* - https://github.com/espressif/arduino-esp32/blob/master/libraries/ESPmDNS
 
-      Notes: <br/> **DO NOT** download these libraries *directly*. Use the *Boards Manager*. <br/> **DO NOT** put them in the WiTcontroller folder. <br/> These libraries do not appear in your list of libraries, but will be available to use regardless. (The files are actually buried away in a subfolder of the ESP32 Boards library.)
+      Notes: <br/> **DO NOT** download these libraries *directly*. Use the *Boards Manager*. <br/> **DO NOT** put them in the DccExController folder. <br/> These libraries do not appear in your list of libraries, but will be available to use regardless. (The files are actually buried away in a subfolder of the ESP32 Boards library.)
 
 6. Copy '**config_network_example.h**' to a new file to '**config_network.h**'.
     * Then edit it to include the network ssids you want to use.  (Not essential, but entering passwords via the encoder is tedious.)
@@ -339,7 +339,7 @@ config_buttons.h can include the following optional defines:
 *Pinouts for Optional Battery Monitor*
 ![Assembly diagram - Optional Battery Monitor](WiTcontroller%20-%20Optional%20battery%20monitor.png)
 
-See diagram above for how to wire in the volage divider.  47k resistors are used, but this can be varied as long as the output to the pin is limited to below 3.3v. See additional information related to the Pangodream Library that WiTcontroller uses here... https://www.pangodream.es/tag/18650-ion-li
+See diagram above for how to wire in the volage divider.  47k resistors are used, but this can be varied as long as the output to the pin is limited to below 3.3v. See additional information related to the Pangodream Library that DccExController uses here... https://www.pangodream.es/tag/18650-ion-li
 
 The diagram has the voltage divider spliced into battery leads, but you can solder the positive in to the back of the battery connector (on the ESP32) if you prefer. The ground can be taken from any ground pin.
 
@@ -396,6 +396,9 @@ I recommend adding a physical power switch to disconnect the battery as this fea
 ---
 
 ## Change Log
+
+### V0.24
+- added support for ``BATTERY_CONVERSION_FACTOR`` define
 
 ### V0.23
 - make roster momentary functions obey momentary if selected from the menu

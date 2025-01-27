@@ -125,7 +125,7 @@
 // additional / optional buttons
 
 // To use the additional buttons, adjust the functions assigned to them in config_buttons.h
-// #define MAX_ADDITIONAL_BUTTONS 7  // If you alter this number, you must also alter the additionalButtonActions array in WiTcontroller.ino
+// #define MAX_ADDITIONAL_BUTTONS 7  // If you alter this number, you must also alter the additionalButtonActions array in DccExController.ino
 // #define ADDITIONAL_BUTTONS_PINS      {5,15,25,26,27,32,33}
 // #define ADDITIONAL_BUTTONS_TYPE      {INPUT_PULLUP,INPUT_PULLUP,INPUT_PULLUP,INPUT_PULLUP,INPUT_PULLUP,INPUT_PULLUP,INPUT_PULLUP}
 //                                      // 34,35,36,39 don't have an internal pullup
