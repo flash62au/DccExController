@@ -130,7 +130,7 @@ The instructions below are for using the Arduino IDE and GitHub Desktop. Visual 
     * Connect the board via USB and select the appropriate port in the *Arduino IDE*.
     * Click *Upload* 
 
-Notes: 
+Version Notes: 
    * DccExController version 0.23 or later requires DCCEXProtocol version 1.0.1 or later.
    * DccExController version 0.20 or later requires DCCEXProtocol version 0.0.16 or later.
    * DccExController version 0.16 or later requires DCCEXProtocol version 0.0.12 or later.
@@ -143,9 +143,27 @@ Notes:
    * To get the DccExController sketch I recommend using either the git command line, or the far more friendly 'GitHub Desktop' app.  See instructions above.
    * If you receive and error related to Python, and you are on MacOs 12 and above please edit the platform file, change from python to python3 as follows; preferences->user/path/arduino/packages/hardware/esp32/version/platform.txt and edit the line that looks as follows:tools.gen_esp32part.cmd=python3 "{runtime.platform.path}/tools/gen_esp32part.py"
 
+<br/>
+
 ---
 
 ## Using WiTController
+
+### WiFi limitations
+ 
+The ESP32 *cannot use the 5gHz* frequencies.  It is limited to the 2.4gHz  frequencies. 
+ 
+It also seems to be *unable to use channels beyond 10* (and I have seen it struggle with channel 10 itself.)
+
+## Definitions and Explanations
+
+*DccExController* is deliberately described as a "controller" not a "throttle".  
+
+A "Throttle" can control only one train, which may be one loco, or more than one loco in consist/MU.
+
+*DccExController*, as a "controller", **contains up to six (6) "throttles"**. Each which can control any number of locos in consist/MU. You can swap between throttles at will (``keypad 5``) to select which locos/consists/MUs you one you are manipulating at a given time. While you can only manipulate one loco/consist/MU at at time, the other continue running at the setting you gave it.
+
+## Features
 
 **Currently functioning:**
 - Provides a list of discovered SSIDs with the ability to choose one. When you select one:
@@ -194,7 +212,7 @@ Notes:
 - Speed button repeat (i.e. hold the button down)
 - Deal with unexpected disconnects better
   - automatic attempt to reconnect
-- Keep a list of ip addresses and ports if mDNS doesn't provide any
+- Keep a list of IP addresses and ports if mDNS doesn't provide any
 - Remember (for the current session only) recently selected locos
 - functions
  - Latching / non-latching for the functions to be provided by the roster entry of EEX-CommandStation
