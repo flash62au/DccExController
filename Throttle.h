@@ -19,7 +19,7 @@ public:
   void setDirection(Direction direction);
   Facing getLocoFacing(int address);
   void setLocoFacing(int address, Facing facing);
-  void setFunction(Loco* loco, int function, boolean state);
+  void setFunction(Loco* loco, int function, bool state);
   void process();
 
 private:

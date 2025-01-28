@@ -12,9 +12,9 @@
 extern int keypadUseType;
 extern int encoderUseType;
 
-extern boolean menuCommandStarted;
+extern bool menuCommandStarted;
 extern String menuCommand;
-extern boolean menuIsShowing;
+extern bool menuIsShowing;
 
 extern String oledText[];
 extern bool oledTextInvert[];
@@ -34,7 +34,7 @@ extern String selectedSsidPassword;
 extern int ssidConnectionState;
 
 extern String ssidPasswordEntered;
-extern boolean ssidPasswordChanged;
+extern bool ssidPasswordChanged;
 extern char ssidPasswordCurrentChar; 
 
 extern IPAddress selectedWitServerIP;
@@ -50,13 +50,13 @@ extern int foundWitServersCount;
 
 extern String foundSsids[];
 extern long foundSsidRssis[];
-extern boolean foundSsidsOpen[];
+extern bool foundSsidsOpen[];
 extern int foundSsidsCount;
 extern int ssidSelectionSource;
 
 extern String witServerIpAndPortConstructed;
 extern String witServerIpAndPortEntered;
-extern boolean witServerIpAndPortChanged;
+extern bool witServerIpAndPortChanged;
 
 extern int rosterSize;
 extern int rosterIndex[]; 
@@ -75,15 +75,15 @@ extern int routeListSize;
 extern int routeListIndex[]; 
 extern String routeListSysName[]; 
 extern String routeListUserName[];
-extern boolean functionStates[][MAX_FUNCTIONS];
+extern bool functionStates[][MAX_FUNCTIONS];
 extern String functionLabels[][MAX_FUNCTIONS];
 extern int functionFollow[][MAX_FUNCTIONS];
 extern int currentSpeedStep[];
 extern int heartBeatPeriod;
 extern long lastServerResponseTime;
-extern boolean heartbeatCheckEnabled;
-extern const boolean encoderRotationClockwiseIsIncreaseSpeed;
-extern const boolean toggleDirectionOnEncoderButtonPressWhenStationary;
+extern bool heartbeatCheckEnabled;
+extern const bool encoderRotationClockwiseIsIncreaseSpeed;
+extern const bool toggleDirectionOnEncoderButtonPressWhenStationary;
 extern int buttonActions[];
 extern const String directCommandText[][3];
 extern int additionalButtonActions[];
@@ -122,7 +122,7 @@ void ssidPasswordAddChar(char);
 void ssidPasswordDeleteChar(char);
 void buildWitEntry(void);
 
-void IRAM_ATTR readEncoderISR(void);
+// void IRAM_ATTR readEncoderISR(void);
 void rotary_onButtonClick(void);
 void rotary_loop(void);
 void encoderSpeedChange(bool, int);
@@ -186,7 +186,7 @@ void writeHeartbeatCheck(void);
 void writeOledSpeed(void);
 void writeOledFunctions(void);
 void writeOledFunctionList(String);
-void writeOledAllLocos(boolean);
+void writeOledAllLocos(bool);
 void writeOledEditConsist();
 void writeOledArray(bool, bool);
 void writeOledArray(bool, bool, bool);

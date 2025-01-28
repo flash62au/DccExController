@@ -112,7 +112,7 @@ The instructions below are for using the Arduino IDE and GitHub Desktop. Visual 
        * Click the green "Code" button and select download zip
        * Extract the zip file to a local folder.  The default folder for the Arduino usually looks like "...username\Documents\Arduino\". This is a good but not essential place to put it.
 4. Load the needed libraries to your PC. <br/> These *MUST BE* loaded from the *Library Manager* in the *Arduino IDE*. 
-    * *U8g2lib.h* -  Search for "U8g2".   Install version 2.33.3 or later. <br/> (later versions should work, but go back to this 2.35.30 if you have problems.)
+    * *U8g2lib.h* -  Search for "U8g2".   Install version 2.35.30 or later. <br/> (later versions should work, but go back to this 2.35.30 if you have problems.)
     * *AiEsp32RotaryEncoder.h* - search for "Ai Esp32 Rotary Encoder".  Install Version 1.4
     * *Keypad.h* - Search for "Keypad" by Mark Stanley.  Install version 3.1.1 or later. <br/> (later versions should work, but go back to this 3.1.1 if you have problems.)
     * *dccexProtocol.h* - Search for "DCCEXProtocol"  Install version 0.0.6, or later if available
@@ -396,6 +396,9 @@ I recommend adding a physical power switch to disconnect the battery as this fea
 ---
 
 ## Change Log
+
+### V0.25
+- bug fix for when using the Arduino IDE
 
 ### V0.24
 - added support for ``BATTERY_CONVERSION_FACTOR`` define

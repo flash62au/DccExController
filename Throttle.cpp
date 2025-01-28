@@ -103,7 +103,7 @@ void Throttle::setLocoFacing(int address, Facing facing) {
   _consist->setLocoFacing(_consist->getByAddress(address)->getLoco(), facing);
 }
 
-void Throttle::setFunction(Loco* loco, int function, boolean state) {
+void Throttle::setFunction(Loco* loco, int function, bool state) {
   if (state) {
     _dccexProtocol->functionOn(loco, function);
   } else {
