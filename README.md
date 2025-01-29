@@ -397,6 +397,9 @@ I recommend adding a physical power switch to disconnect the battery as this fea
 
 ## Change Log
 
+### V0.26
+- fix bug introduced by changes in v1.0.1 of the Protocol library such that the direction of non-roster locos could not be changed.
+
 ### V0.25
 - bug fix for when using the Arduino IDE
 

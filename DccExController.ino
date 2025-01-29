@@ -330,9 +330,13 @@ class MyDelegate : public DCCEXProtocolDelegate {
       broadcastMessageTime = millis();
       refreshOled();
     }
-    virtual void receivedLocoUpdate(Loco* loco) {
+    virtual void receivedLocoUpdate(Loco* loco) {  // roster locos only
       debugLocoSpeed("receivedLocoUpdate: ", loco); 
       _processLocoUpdate(loco);
+    }
+    void receivedLocoBroadcast(int address, int speed, Direction direction, int functionMap) { // non-roster locos only
+      debugLocoSpeed("receivedLocoBroadcast: ", address, LocoSourceEntry, speed, direction); 
+      _processLocoBroadcast(address, speed, direction, functionMap);
     }
     void receivedTrackPower(TrackPower state) { 
       debug_print("Received TrackPower: "); debug_println(state);
@@ -2173,6 +2177,7 @@ void toggleHeartbeatCheck() {
 
 void toggleDirection(int multiThrottleIndex) {
   if (throttles[currentThrottleIndex]->getLocoCount() > 0) {
+    debug_print("toggleDirection(): Current Direction: "); debug_println( (currentDirection[multiThrottleIndex]==Forward) ? "Forward" : "Reverse");
     changeDirection(multiThrottleIndex, (currentDirection[multiThrottleIndex] == Forward) ? Reverse : Forward );
     writeOledSpeed();
   }
@@ -2182,10 +2187,11 @@ void changeDirection(int multiThrottleIndex, Direction direction) {
   int locoCount = throttles[currentThrottleIndex]->getLocoCount();
 
   if (locoCount > 0) {
+    debugLocoSpeed("changeDirection() first loco: Current: ", throttles[currentThrottleIndex]->getFirst()->getLoco() );
     currentDirection[multiThrottleIndex] = direction;
     debug_print("changeDirection(): "); debug_println( (direction==Forward) ? "Forward" : "Reverse");
     throttles[multiThrottleIndex]->setDirection(direction);
-    debugLocoSpeed("changeDirection() first loco in consist: ", throttles[currentThrottleIndex]->getFirst()->getLoco() );
+    debugLocoSpeed("changeDirection() first loco:     New: ", throttles[currentThrottleIndex]->getFirst()->getLoco() );
 
   }
   writeOledSpeed();
@@ -2506,7 +2512,6 @@ void _processLocoUpdate(Loco* loco) {
           debugLocoSpeed("_processLocoUpdate() Processing Received Speed: (" + String(lastSpeedThrottleIndex) + ") ", loco);
           displayUpdateFromWit(i);
         } else {
-          // debug_print("Received Speed: skipping response: ("); debug_print(lastSpeedThrottleIndex); debug_print(") speed: "); debug_println(loco->getSpeed());
           debugLocoSpeed("_processLocoUpdate() Skipping Received Speed! ", loco);
         }
         for (int j=0; j<MAX_FUNCTIONS; j++) {
@@ -2524,6 +2529,48 @@ void _processLocoUpdate(Loco* loco) {
     debug_println("_processLocoUpdate() loco not found");  
   }
   debug_println("_processLocoUpdate() end");
+}
+
+void _processLocoBroadcast(int address, int speed, Direction direction, int functionMap) {
+  debugLocoSpeed("_processLocoBroadcast() start:", address, LocoSourceEntry, speed, direction); 
+  bool found = false;
+  for (int i=0; i<maxThrottles; i++) {
+    if (throttles[i]->getLocoCount()>0) {
+      Loco* firstLoco = throttles[i]->getFirst()->getLoco();
+      if (firstLoco->getAddress()==address) {
+        found = true;
+
+        // check for bounce. (intermediate speed sent back from the server, but is not up to date with the throttle)
+        if ( (lastSpeedThrottleIndex != i) || ((millis()-lastSpeedSentTime)>2000) ) {
+          firstLoco->setSpeed(speed);
+          firstLoco->setDirection(direction);
+          currentSpeed[i] = speed;
+          currentDirection[i] = direction;
+          debugLocoSpeed("_processLocoBroadcast() Processing Received Speed: (" + String(lastSpeedThrottleIndex) + ") ", address, LocoSourceEntry, speed, direction);
+          displayUpdateFromWit(i);
+        } else {
+          debugLocoSpeed("_processLocoBroadcast() Skipping Received Speed! ", address, LocoSourceEntry, speed, direction);
+        }
+
+        for (int j=0; j<MAX_FUNCTIONS; j++) {
+          bool newState = isFunctionOn(functionMap, j);
+          if (functionStates[i][j] != newState) {
+            Serial.println("Changed");
+            functionStates[i][j] = newState;
+            displayUpdateFromWit(i);
+          }
+        }
+      }
+    }
+  }
+  if (!found) {
+    debug_println("_processLocoBroadcast() loco not found");  
+  }
+  debug_println("_processLocoBroadcast() end");
+}
+
+bool isFunctionOn(int functionMap, int function) { 
+  return functionMap & 1 << function; 
 }
 
 String boolToYesNo(bool value) {
