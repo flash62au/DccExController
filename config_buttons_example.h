@@ -238,4 +238,4 @@
 //
 // uncomment if you have problems with accented characters
 //
-// #define FONT_DEFAULT u8g2_font_5x8_tf
+//  #define FONT_DEFAULT u8g2_font_5x8_tf
