@@ -397,6 +397,9 @@ I recommend adding a physical power switch to disconnect the battery as this fea
 
 ## Change Log
 
+### V0.28
+- able to override the default font
+
 ### V0.27
 - change to a font that has accented characters
 

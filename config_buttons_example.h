@@ -231,3 +231,11 @@
 // #define BATTERY_CONVERSION_FACTOR 1.7
 // #define USE_BATTERY_PERCENT_AS_WELL_AS_ICON false
 // #define USE_BATTERY_SLEEP_AT_PERCENT 3
+
+
+// *******************************************************************************************************************
+// Primary Font override
+//
+// uncomment if you have problems with accented characters
+//
+// #define FONT_DEFAULT u8g2_font_5x8_tf
