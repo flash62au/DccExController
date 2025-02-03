@@ -1184,6 +1184,7 @@ void additionalButtonLoop() {
 void setup() {
   Serial.begin(115200);
   u8g2.begin();
+  u8g2.enableUTF8Print();		// enable UTF8 support for the Arduino print()
   // i2cSetClock(0,400000);
 
   clearOledArray(); oledText[0] = appName; oledText[6] = appVersion; oledText[2] = MSG_START;
@@ -2997,8 +2998,9 @@ void writeOledSpeed() {
     u8g2.setFont(FONT_GLYPHS);
     u8g2.drawGlyph(1, 38, glyph_speed_step);
     u8g2.setFont(FONT_DEFAULT);
-    // u8g2.drawStr(0, 37, ("X " + String(speedStepCurrentMultiplier)).c_str());
-    u8g2.drawStr(9, 37, String(speedStepCurrentMultiplier).c_str());
+    // // u8g2.drawStr(0, 37, ("X " + String(speedStepCurrentMultiplier)).c_str());
+    // u8g2.drawStr(9, 37, String(speedStepCurrentMultiplier).c_str());
+    u8g2.drawUTF8(9, 37, String(speedStepCurrentMultiplier).c_str());
   }
 
   if (trackPower == PowerOn) {
@@ -3175,7 +3177,9 @@ void writeOledArray(bool isThreeColums, bool isPassword, bool sendBuffer, bool d
       u8g2.drawBox(x,y-8,62,10);
       u8g2.setDrawColor(0);
     }
-    u8g2.drawStr(x,y, cLine1);
+    // u8g2.drawStr(x,y, cLine1);
+    u8g2.drawUTF8(x,y, cLine1);
+
     u8g2.setDrawColor(1);
 
     if ((isPassword) && (i==2)) u8g2.setFont(FONT_DEFAULT); 
