@@ -1,4 +1,4 @@
-const String appVersion = "  v0.30";
+const String appVersion = "  v0.31";
 #ifndef CUSTOM_APPNAME
    const String appName = "DccExController";
 #else

@@ -397,6 +397,9 @@ I recommend adding a physical power switch to disconnect the battery as this fea
 
 ## Change Log
 
+### V0.31
+- bug fix.  roster entries >60 would cause a crash
+
 ### V0.30
 - add define for ``CUSTOM_APPNAME``
 

@@ -1184,7 +1184,7 @@ void additionalButtonLoop() {
 void setup() {
   Serial.begin(115200);
   u8g2.begin();
-  u8g2.enableUTF8Print();		// enable UTF8 support for the Arduino print()
+  // u8g2.enableUTF8Print();		// enable UTF8 support for the Arduino print()
   // i2cSetClock(0,400000);
 
   clearOledArray(); oledText[0] = appName; oledText[6] = appVersion; oledText[2] = MSG_START;
@@ -2445,6 +2445,8 @@ void _loadRoster() {
   debug_print("_loadRoster()");
   rosterSize = dccexProtocol.getRosterCount();
   debug_println(rosterSize);
+  rosterSize = (rosterSize<maxRoster) ? rosterSize : maxRoster;
+
   if (rosterSize > 0) {
     int index = 0;
     for (Loco* rl=dccexProtocol.roster->getFirst(); rl; rl=rl->getNext()) {
@@ -2656,9 +2658,12 @@ void writeOledRoster(String soFar) {
   keypadUseType = KEYPAD_USE_SELECT_ROSTER;
   if (soFar == "") { // nothing entered yet
     clearOledArray();
-    for (int i=0; i<5 && i<rosterSize; i++) {
-      if (rosterAddress[(page*5)+i] != 0) {
-        oledText[i] = String(rosterIndex[i]) + ": " + rosterName[(page*5)+i] + " (" + rosterAddress[(page*5)+i] + ")" ;
+    for (int i=0; i<5 && ((page*5)+i < rosterSize); i++) {
+      int index = (page*5)+i;
+      // debug_print("writeOledRoster() i:");  debug_print(i); debug_print(" index: "); debug_print(index); debug_print(" rosterSize: "); debug_println(rosterSize);
+      if (rosterAddress[index] != 0) {
+        // debug_print("writeOledRoster() rosterName:");  debug_print(rosterName[index]); debug_print(" rosterAddress: "); debug_print(rosterAddress[index]); debug_print(" rosterSize: "); debug_println(rosterSize);
+        oledText[i] = String(rosterIndex[i]) + ": " + rosterName[index] + " (" + rosterAddress[index] + ")" ;
       }
     }
     oledText[5] = "(" + String(page+1) +  ") " + menu_text[menu_roster];
