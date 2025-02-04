@@ -245,4 +245,4 @@
 //
 // uncomment and change if required
 //
-// #define CUSTOM_APPNAME myname
+// #define CUSTOM_APPNAME "myname"
