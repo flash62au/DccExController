@@ -1,5 +1,9 @@
-const String appName = "DccExController";
-const String appVersion = "  v0.29";
+const String appVersion = "  v0.30";
+#ifndef CUSTOM_APPNAME
+   const String appName = "DccExController";
+#else
+   const String appName = CUSTOM_APPNAME;
+#endif
 
 
 #ifndef MENU_TEXT_MENU

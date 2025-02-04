@@ -397,11 +397,14 @@ I recommend adding a physical power switch to disconnect the battery as this fea
 
 ## Change Log
 
+### V0.30
+- add define for ``CUSTOM_APPNAME``
+
 ### V0.29
 - support UTF8 fonts better
 
 ### V0.28
-- able to override the default font
+- able to override the default font (not recommended)
 
 ### V0.27
 - change to a font that has accented characters

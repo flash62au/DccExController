@@ -232,10 +232,17 @@
 // #define USE_BATTERY_PERCENT_AS_WELL_AS_ICON false
 // #define USE_BATTERY_SLEEP_AT_PERCENT 3
 
-
 // *******************************************************************************************************************
-// Primary Font override
+// Primary Font override (not recommended)
+// any 8 pixel high fonts from here can be used https://github.com/olikraus/u8g2/wiki/fntlist8#8-pixel-height
 //
-// uncomment if you have problems with accented characters
+// uncomment if and change to the appropriate font if required
 //
 //  #define FONT_DEFAULT u8g2_font_5x8_tf
+
+// *******************************************************************************************************************
+// Custom App Name
+//
+// uncomment and change if required
+//
+// #define CUSTOM_APPNAME myname
