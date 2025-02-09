@@ -392,6 +392,17 @@ The display of the battery can be temporarily toggled by setting a key or button
 Note: 
 I recommend adding a physical power switch to disconnect the battery as this feature will, slowly, continually drain the battery, even when not being used.
 
+<br />
+
+---
+---
+
+## Modifying the code
+
+If you plan to modify the code it is recommended that you create your own GitHub fork of my repository and post your mods there.
+
+[Instructions on how to do so are here](forking.md).
+
 ---
 ---
 
