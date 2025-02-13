@@ -5,7 +5,7 @@ If you plan to modify the code it is recommended that you create your own GitHub
 That way:
 
 * It is easier to accept any changes I make in my origin repository. </br> Git will generally merge the changes automatically. (Rather you than manually patching each each time.)
-* You can, if you wish, send your changes to me, via Pull Requests from your fork, for inclusion in the origin
+* ~~You can, if you wish, send your changes to me, via Pull Requests from your fork, for inclusion in the origin~~
 * It is easier for other people to pull down your version, and any subsequent changes to your version, to try it out without effecting their other versions. 
 
 ## Required Software
